@@ -1,0 +1,19 @@
+.idea/
+.DS_Store
+.vscode
+*/build
+*/cmake
+./server/ADG/ADG
+./server/ADG/ADG_client
+./server/ADG/ADG_server
+./server/ADG/external
+cmake-build-debug/
+client/client_output/*
+server_output/*
+build/
+! server_output/.gitkeep
+.cache/
+ArgosConfig/__pycache__
+output.argos
+outputPath.txt
+stats.csv

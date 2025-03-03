@@ -1,0 +1,6 @@
+[submodule "client/externalDependencies/rpclib"]
+	path = client/externalDependencies/rpclib
+	url = https://github.com/rpclib/rpclib
+[submodule "planner/LNS"]
+	path = planner/LNS
+	url = https://github.com/lunjohnzhang/MAPF-LNS2.git

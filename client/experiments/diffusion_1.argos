@@ -1,0 +1,187 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <!--
+        System configuration:
+        - threads: the number of slave threads to parallelize the
+          computation. For less than 100 robots thread management is not
+          beneficial, so here we set it to 0. When set to 0, it means that
+          the computation is not parallelized: the main thread does
+          everything.
+    -->
+    <system threads="0" />
+    <!--
+        Experiment configuration:
+        - length: total experiment time in seconds (0 means the experiment
+          has no time limit)
+        - ticks_per_second: number of ticks per second (int value)
+        - random_seed: seed of the main random number generator. If unset
+          or set to zero, this value is taken from the clock and a warning
+          message is displayed.
+    -->
+    <experiment length="0"
+                ticks_per_second="10"
+                random_seed="124" />
+  </framework>
+
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+
+    <!-- 
+         Here you list the controllers to be used in the experiment.
+         The XML tag is set by the REGISTER_CONTROLLER(class, "tag") macro.
+         You find it in the .cpp file of your controller.
+         For this example, the macro is called in
+         controllers/footbot_diffusion.cpp:100.
+    -->
+
+    <!--
+        The attributes are:
+        - id: a unique a identifier for this controller, to be used in the
+          subsequent <arena> section to say which robots use which
+          controller
+        - library: the path to the compiled library containing you
+          controller.
+    -->
+    <footbot_diffusion_controller id="fdc"
+                                  library="build/controllers/footbot_diffusion/libfootbot_diffusion">
+      <!--
+          The <actuators> section contains a list of the actuators used by
+          this controller.
+          If you forget a to mention an actuator here and then request it
+          in the controller, an error occurs.
+          For a list of the possible actuators, type at the command prompt:
+          $ launch_argos -q actuators
+
+          Multiple implementations of an actuator are possible. To
+          identify which one you want to use, pass it in the
+          'implementation' attribute below. When you type the 'argos3 -q'
+          command, the implementation is in the square brackets following
+          the name of the device:
+
+          $ argos3 -q actuators
+          ...
+          footbot_wheels [default]
+          ...
+      -->
+      <actuators>
+        <differential_steering implementation="default" />
+      </actuators>
+      <!--
+          The <sensors> section contains a list of the sensors used by
+          this controller.
+          If you forget a to mention a sensor here and then request it in
+          the controller, an error occurs.
+          For a list of the possible sensors, type at the command prompt:
+          $ argos3 -q sensors
+      -->
+      <sensors>
+        <footbot_proximity implementation="default" show_rays="true" />
+        <positioning implementation="default" />
+      </sensors>
+      <!--
+          The <params> section is passed as-is to the controller's Init()
+          function.
+          The user, writing the controller, defines how it is organized.
+          To understand what these parameters are for, check the
+          controller's header file in
+          controllers/footbot_diffusion/footbot_diffusion.h.
+      -->
+      <params alpha="7.5" omega="3.0" velocity="100" acceleration = "1.0" />
+    </footbot_diffusion_controller>
+
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <!--
+      Here you place all the objects in the arena.
+      All linear measures are expressed in meters.
+      Angles are expressed in degrees.
+      The 'size' attribute contains the size of the arena around the
+      origin.
+      To get help about which entities are available, type at the command
+      prompt:
+      
+      $ argos3 -q entities
+
+      and to get help about a specific entity (for instance, the box)
+
+      $ argos3 -q box
+  -->
+  <arena size="3, 3, 1" center="-1,-1,0">
+
+    <!-- Place four boxes in a square to delimit the arena -->
+
+
+    <!-- Place a foot-bot in the origin and bind it to the controller -->
+    <foot-bot id="fb_0">
+      <body position="0,1,0" orientation="0,0,0" />
+      <controller config="fdc"/>
+    </foot-bot>
+
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <!--
+      In ARGoS, multiple physics engines can run at the same time.
+      In this section you say which engines to use for the experiment.
+      To know which engines are available, type at the command prompt:
+      
+      $ argos3 -q physics_engines
+  -->
+  <physics_engines>
+    <!--
+        Use a 2D dynamics engine.
+    -->
+    <dynamics2d id="dyn2d" />
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <!--
+      Here you specify the media in use. Media allow robots to communicate.
+      In this experiment, robots do not communicate, so no media are
+      specified.
+      To know which media are available, type at the command prompt:
+
+      $ argos3 -q media
+  -->
+  <media />
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <!--
+      Here you specify which visualization to use.
+      You can also not specify a visualization at all, in which case ARGoS
+      will run without showing anything.
+      Having no visualization is useful when you run ARGoS in a batch of
+      experiments to collect statistics.
+      To know which visualizations are available, type at the command
+      prompt:
+
+      $ argos3 -q visualizations
+  -->
+  <visualization>
+    <qt-opengl>
+      <camera>
+        <placements>
+          <placement index="0" position="0,0,8.14689" look_at="0,0,0" up="1,0,0" lens_focal_length="20" />
+        </placements>
+      </camera>
+    </qt-opengl>
+  </visualization>
+
+</argos-configuration>
