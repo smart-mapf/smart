@@ -80,7 +80,9 @@ def create_xml(map_data, output_file_path, width, height, robot_init_pos):
 def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr_num_agent, port_num, visualization=False):
     # Create the root element
     argos_config = ET.Element("argos-configuration")
-
+    # ET.SubElement(argos_config,'loop_functions',
+    #               library="loop_functions/logger_loop_functions/build/liblogger_loop_functions", label="logger_loop_functions")
+    
     # General configuration section
     framework = ET.SubElement(argos_config, "framework")
 
@@ -180,12 +182,13 @@ def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr
         # Visualization
         visualization = ET.SubElement(argos_config, "visualization")
         # qt_opengl = ET.SubElement(visualization, "qt-opengl", autoplay="true")
-        qt_opengl = ET.SubElement(visualization, "qt-opengl")
+        visualizer = ET.SubElement(visualization, "qt-opengl")
+        # visualizer = ET.SubElement(visualization, "external_visualizer")
 
         # autoplay = ET.SubElement(qt_opengl, "autoplay",
         #                           autoplay="true")
         # Camera
-        camera = ET.SubElement(qt_opengl, "camera")
+        camera = ET.SubElement(visualizer, "camera")
         placements = ET.SubElement(camera, "placements")
         placement = ET.SubElement(placements, "placement",
                                   index="0",
