@@ -8,37 +8,43 @@
 #include <argos3/plugins/robots/foot-bot/simulator/footbot_entity.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_render.h>
+#include <fmt/core.h>
 #include <thread>
 
-void ExternalVisualizer::Screenshot(argos::CSimulator &simulator) {}
+using namespace argos;
+using namespace fmt;
+using namespace std;
+using namespace std::chrono;
+using namespace std::this_thread;
 
-void ExternalVisualizer::Init(argos::TConfigurationNode &t_tree) {}
+void ExternalVisualizer::Screenshot(CSimulator &simulator) {}
+
+void ExternalVisualizer::Init(TConfigurationNode &t_tree) {}
 
 void ExternalVisualizer::Reset() {}
 
 void ExternalVisualizer::Destroy() {}
 
 void ExternalVisualizer::Execute() {
-  while (true) {
-    auto &cSimulator = argos::CSimulator::GetInstance();
-    auto &cSpace = cSimulator.GetSpace();
-    auto &tFootBots = cSpace.GetEntitiesByType("foot-bot");
 
-    for (const auto &it : tFootBots) {
-      argos::CFootBotEntity &pcFootBot =
-          *argos::any_cast<argos::CFootBotEntity *>(it.second);
-      const argos::CVector3 &cPos =
-          pcFootBot.GetEmbodiedEntity().GetOriginAnchor().Position;
-      argos::LOG << pcFootBot.GetId() << ": (" << cPos.GetX() << ", "
-                 << cPos.GetY() << ", " << cPos.GetZ() << ")" << std::endl;
+  while (true) {
+    auto &simulator = CSimulator::GetInstance();
+    auto &space = simulator.GetSpace();
+    auto &bots = space.GetEntitiesByType("foot-bot");
+    for (const auto &it : bots) {
+      auto &bot = *any_cast<CFootBotEntity *>(it.second);
+      auto &anchor = bot.GetEmbodiedEntity().GetOriginAnchor();
+      auto &p = anchor.Position;
+      LOG << format("{}: ({:.2f}, {:.2f}, {:.2f})", bot.GetId(), p.GetX(),
+                    p.GetY(), p.GetZ())
+          << endl;
     }
 
-    argos::CSimulator::GetInstance().UpdateSpace();
+    CSimulator::GetInstance().UpdateSpace();
 
-    ExternalVisualizer::Screenshot(cSimulator);
+    ExternalVisualizer::Screenshot(simulator);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    break;
+    sleep_for(milliseconds(1000 / 60));
   }
 }
 

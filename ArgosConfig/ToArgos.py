@@ -182,8 +182,8 @@ def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr
         # Visualization
         visualization = ET.SubElement(argos_config, "visualization")
         # qt_opengl = ET.SubElement(visualization, "qt-opengl", autoplay="true")
-        visualizer = ET.SubElement(visualization, "qt-opengl")
-        # visualizer = ET.SubElement(visualization, "external_visualizer")
+        # visualizer = ET.SubElement(visualization, "qt-opengl")
+        visualizer = ET.SubElement(visualization, "external_visualizer")
 
         # autoplay = ET.SubElement(qt_opengl, "autoplay",
         #                           autoplay="true")

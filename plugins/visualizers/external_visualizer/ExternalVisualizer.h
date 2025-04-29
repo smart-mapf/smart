@@ -5,11 +5,8 @@
 class ExternalVisualizer : public argos::CVisualization {
 public:
   virtual void Init(argos::TConfigurationNode &t_tree) override;
-
   virtual void Reset() override;
-
   virtual void Destroy() override;
-
   virtual void Execute() override;
   virtual void Screenshot(argos::CSimulator &simulator);
 };
