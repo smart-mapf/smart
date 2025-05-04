@@ -8,5 +8,5 @@ public:
   virtual void Reset() override;
   virtual void Destroy() override;
   virtual void Execute() override;
-  virtual void Screenshot(argos::CSimulator &simulator);
+  virtual void Capture();
 };

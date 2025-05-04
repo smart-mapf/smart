@@ -9,15 +9,41 @@
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_render.h>
 #include <fmt/core.h>
-#include <thread>
+
+#include "log.h"
 
 using namespace argos;
 using namespace fmt;
 using namespace std;
 using namespace std::chrono;
-using namespace std::this_thread;
 
-void ExternalVisualizer::Screenshot(CSimulator &simulator) {}
+void ExternalVisualizer::Capture() {
+  auto &instance = CSimulator::GetInstance();
+  auto &space = instance.GetSpace();
+  auto &bots = space.GetEntitiesByType("foot-bot");
+  item(
+    obj(
+      val("clock", space.GetSimulationClock());
+      key("agents",      
+        list(
+          for (const auto &it : bots) {
+            auto &bot = *any_cast<CFootBotEntity *>(it.second);
+            auto &anchor = bot.GetEmbodiedEntity().GetOriginAnchor();
+            auto &p = anchor.Position;
+            obj( 
+              val("id", bot.GetId());
+              val("x", p.GetX(), "{:.2f}");
+              val("y", p.GetY(), "{:.2f}");
+              val("z", p.GetZ(), "{:.2f}");
+              val("rx", p.GetXAngle().GetValue(), "{:.2f}");
+              val("ry", p.GetYAngle().GetValue(), "{:.2f}");
+              val("rz", p.GetZAngle().GetValue(), "{:.2f}");
+            );
+          }
+        );
+      );
+    )
+  )}
 
 void ExternalVisualizer::Init(TConfigurationNode &t_tree) {}
 
@@ -25,27 +51,20 @@ void ExternalVisualizer::Reset() {}
 
 void ExternalVisualizer::Destroy() {}
 
+#define DEFINITION 2
+
 void ExternalVisualizer::Execute() {
-
+  cout << "---" << endl;
+  ExternalVisualizer::Capture();
   while (true) {
-    auto &simulator = CSimulator::GetInstance();
-    auto &space = simulator.GetSpace();
-    auto &bots = space.GetEntitiesByType("foot-bot");
-    for (const auto &it : bots) {
-      auto &bot = *any_cast<CFootBotEntity *>(it.second);
-      auto &anchor = bot.GetEmbodiedEntity().GetOriginAnchor();
-      auto &p = anchor.Position;
-      LOG << format("{}: ({:.2f}, {:.2f}, {:.2f})", bot.GetId(), p.GetX(),
-                    p.GetY(), p.GetZ())
-          << endl;
+    auto &instance = CSimulator::GetInstance();
+    auto t = instance.GetSpace().GetSimulationClock();
+    if (t % DEFINITION == 0) {
+      ExternalVisualizer::Capture();
     }
-
-    CSimulator::GetInstance().UpdateSpace();
-
-    ExternalVisualizer::Screenshot(simulator);
-
-    sleep_for(milliseconds(1000 / 60));
-  }
+    instance.UpdateSpace();
+  };
+  cout << "---" << endl;
 }
 
 REGISTER_VISUALIZATION(ExternalVisualizer, "external_visualizer", "Kevin Zheng",
