@@ -17,3 +17,5 @@ ArgosConfig/__pycache__
 output.argos
 outputPath.txt
 stats.csv
+
+node_modules/

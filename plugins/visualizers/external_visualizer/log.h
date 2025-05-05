@@ -16,13 +16,12 @@
   rest;                                                                        \
   cout << "}, ";
 
-#define item(rest)                                                             \
-  cout << "- ";                                                                \
-  rest;                                                                        \
-  cout << endl;
-;
 #define list(rest)                                                             \
   cout << "[";                                                                 \
   rest;                                                                        \
   cout << "], ";
-;
+
+#define item(rest)                                                             \
+  cout << "{";                                                                 \
+  rest;                                                                        \
+  cout << "}" << endl;

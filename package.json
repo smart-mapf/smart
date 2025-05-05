@@ -1,0 +1,21 @@
+{
+  "name": "smart",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/js-yaml": "^4.0.9"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.17.16",
+    "@types/tempy": "^0.3.0",
+    "get-port-please": "^3.1.2",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "tempy": "^3.1.0"
+  }
+}

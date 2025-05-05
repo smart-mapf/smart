@@ -22,28 +22,27 @@ void ExternalVisualizer::Capture() {
   auto &space = instance.GetSpace();
   auto &bots = space.GetEntitiesByType("foot-bot");
   item(
-    obj(
-      val("clock", space.GetSimulationClock());
-      key("agents",      
-        list(
-          for (const auto &it : bots) {
+    val("clock", space.GetSimulationClock());
+    key("agents", 
+      list(
+        for (const auto &it : bots) {
             auto &bot = *any_cast<CFootBotEntity *>(it.second);
             auto &anchor = bot.GetEmbodiedEntity().GetOriginAnchor();
             auto &p = anchor.Position;
-            obj( 
-              val("id", bot.GetId());
+            obj(
+              val("id", bot.GetId()); 
               val("x", p.GetX(), "{:.2f}");
-              val("y", p.GetY(), "{:.2f}");
+              val("y", p.GetY(), "{:.2f}"); 
               val("z", p.GetZ(), "{:.2f}");
               val("rx", p.GetXAngle().GetValue(), "{:.2f}");
               val("ry", p.GetYAngle().GetValue(), "{:.2f}");
               val("rz", p.GetZAngle().GetValue(), "{:.2f}");
             );
           }
-        );
       );
-    )
-  )}
+    );
+  )
+}
 
 void ExternalVisualizer::Init(TConfigurationNode &t_tree) {}
 
@@ -51,20 +50,17 @@ void ExternalVisualizer::Reset() {}
 
 void ExternalVisualizer::Destroy() {}
 
-#define DEFINITION 2
+#define DEFINITION 6
 
 void ExternalVisualizer::Execute() {
-  cout << "---" << endl;
-  ExternalVisualizer::Capture();
-  while (true) {
-    auto &instance = CSimulator::GetInstance();
+  auto &instance = CSimulator::GetInstance();
+  while (!instance.IsExperimentFinished()) {
     auto t = instance.GetSpace().GetSimulationClock();
     if (t % DEFINITION == 0) {
       ExternalVisualizer::Capture();
     }
     instance.UpdateSpace();
   };
-  cout << "---" << endl;
 }
 
 REGISTER_VISUALIZATION(ExternalVisualizer, "external_visualizer", "Kevin Zheng",
