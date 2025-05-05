@@ -32,7 +32,7 @@ void ExternalVisualizer::Capture() {
             obj(
               val("id", bot.GetId()); 
               val("x", p.GetX(), "{:.2f}");
-              val("y", p.GetY(), "{:.2f}"); 
+              val("y", p.GetY(), "{:.2f}");
               val("z", p.GetZ(), "{:.2f}");
               val("rx", p.GetXAngle().GetValue(), "{:.2f}");
               val("ry", p.GetYAngle().GetValue(), "{:.2f}");
