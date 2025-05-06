@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
+
 project(ADG_Server_Project)
+
+find_package(fmt)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -14,4 +17,4 @@ file(GLOB SOURCES "src/*.cpp")
 
 add_executable(ADG_server ${SOURCES})
 
-target_link_libraries(ADG_server PUBLIC ${Boost_LIBRARIES} PRIVATE rpc pthread)
+target_link_libraries(ADG_server PUBLIC fmt::fmt ${Boost_LIBRARIES} PRIVATE rpc pthread)

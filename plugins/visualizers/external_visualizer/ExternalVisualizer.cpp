@@ -22,6 +22,7 @@ void ExternalVisualizer::Capture() {
   auto &space = instance.GetSpace();
   auto &bots = space.GetEntitiesByType("foot-bot");
   item(
+    val("type", "tick");
     val("clock", space.GetSimulationClock());
     key("agents", 
       list(

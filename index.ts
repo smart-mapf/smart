@@ -1,6 +1,7 @@
 import { file, spawn, write } from "bun";
 import { getPort } from "get-port-please";
 import { load } from "js-yaml";
+import { isObject, isPlainObject } from "lodash";
 import { temporaryFile } from "tempy";
 
 type Options = {
@@ -38,7 +39,10 @@ export type Step = {
   }[];
 };
 
-export type Output = Step | Record<never, never>;
+export type Output =
+  | Step
+  | { type: "error"; error: any }
+  | Record<never, never>;
 
 /**
  * This function runs a simulation using the provided map, scenario, paths, and number of agents.
@@ -80,12 +84,19 @@ export async function run({ map, paths, agents, scen }: Options) {
   return {
     async *values() {
       const decoder = new TextDecoder();
+      let buffer = "";
       for await (const line of out.stdout.values()) {
         const text = decoder.decode(line);
-        try {
-          yield load(text) as Output;
-        } catch (e) {
-          // Ignore parse errors
+        if (text.endsWith("\n")) {
+          try {
+            const out = load(buffer + text);
+            if (isPlainObject(out)) yield out as Output;
+          } catch (e) {
+            // Ignore parse errors
+          }
+          buffer = "";
+        } else {
+          buffer += text;
         }
       }
     },
