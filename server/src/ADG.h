@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iomanip>
 
+#include "log.h"
 #include "parser.h"
 
 typedef std::vector<std::tuple<std::string, int, double, std::string, std::pair<double, double>, std::pair<double, double>>> SIM_PLAN;
@@ -85,6 +86,15 @@ public:
             std::cout << std::endl;
         }
         std::cout << std::endl;
+    }
+
+    void returnProgress() {
+        std::cout << "{";
+        val("type","adg_progress");
+        for (int agent_id = 0; agent_id < num_robots; agent_id++) {
+            findConstraining(agent_id);
+        }
+        std::cout << "}" << std::endl;
     }
 
 private:

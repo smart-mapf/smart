@@ -179,25 +179,33 @@ void ADG::setEnqueueNodes(int robot_id, std::vector<int> &enqueue_nodes) {
 }
 
 void ADG::findConstraining(int robot_id) {
+  val("agent_id", std::to_string(robot_id));
   auto &curr_agent_plan = graph[robot_id];
   int latest_finished_idx = finished_node_idx[robot_id];
   int next_node_idx = latest_finished_idx + 1;
-  for (int i = next_node_idx; i < curr_agent_plan.size(); i++) {
-    if (curr_agent_plan[i].has_valid_in_edge) {
-      updateADGNode(curr_agent_plan[i]);
-    }
-
-    if (curr_agent_plan[i].has_valid_in_edge) {
-      std::cout << "Constraining idx: " << i << ";";
-      for (auto tmp_edge : curr_agent_plan[i].incomeEdges) {
-        if (tmp_edge->valid) {
-          std::cout << " Constraint Agent " << tmp_edge->from_agent_id
-                    << " at node " << tmp_edge->from_node_id << ";";
+  key_log("constraining_agent",
+  list(
+      for (int i = next_node_idx; i < curr_agent_plan.size(); i++) {
+        if (curr_agent_plan[i].has_valid_in_edge) {
+          updateADGNode(curr_agent_plan[i]);
         }
+        if (curr_agent_plan[i].has_valid_in_edge) {
+          // std::cout << "Constraining idx: " << i << ";";
+          for (auto tmp_edge : curr_agent_plan[i].incomeEdges) {
+            if (tmp_edge->valid) {
+              // std::cout << " Constraint Agent " << tmp_edge->from_agent_id
+              //           << " at node " << tmp_edge->from_node_id << ";";
+              obj_log(
+                val("id", tmp_edge->from_agent_id);
+              );
+            }
+          }
+          break;
+        }
+
       }
-      break;
-    }
-  }
+    );
+  );
 }
 
 void ADG::printActions(

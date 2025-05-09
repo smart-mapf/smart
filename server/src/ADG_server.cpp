@@ -86,6 +86,7 @@ std::string receive_update(std::string& RobotID, int node_ID) {
     std::lock_guard<std::mutex> guard(globalMutex);
     int Robot_ID = server_ptr->startIndexToRobotID[RobotID];
     bool status_update = server_ptr->adg->updateFinishedNode(Robot_ID, node_ID);
+    server_ptr->adg->returnProgress();
     if (server_ptr->adg->isAgentFinished(Robot_ID)) {
         auto endTime = std::chrono::steady_clock::now();
         auto diff = endTime - startTimers[Robot_ID];
