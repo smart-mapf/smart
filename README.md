@@ -1,5 +1,15 @@
 # Scalable Multi-Agent Realistic Testbed (SMART)
 
+### Output format for ADG progress
+We return the current progress of ADG in the following format:
+```
+{type: adg_progress, agent_id: 0, constraining_agent: [{id: 3, }, ], agent_id: 1, constraining_agent: [{id: 7, }, ], agent_id: 2, constraining_agent: [{id: 17, }, ], agent_id: 3, constraining_agent: [{id: 7, }, ], agent_id: 4, constraining_agent: [{id: 14, }, ], agent_id: 5, constraining_agent: [], agent_id: 6, constraining_agent: [], agent_id: 7, constraining_agent: [{id: 4, }, ], agent_id: 8, constraining_agent: [], agent_id: 9, constraining_agent: [], agent_id: 10, constraining_agent: [{id: 2, }, ], agent_id: 11, constraining_agent: [{id: 4, }, {id: 4, }, ], agent_id: 12, constraining_agent: [], agent_id: 13, constraining_agent: [{id: 19, }, ], agent_id: 14, constraining_agent: [{id: 6, }, {id: 6, }, ], agent_id: 15, constraining_agent: [{id: 9, }, ], agent_id: 16, constraining_agent: [{id: 5, }, ], agent_id: 17, constraining_agent: [], agent_id: 18, constraining_agent: [], agent_id: 19, constraining_agent: [], }
+```
+
+- type indicates the print type;
+- agent_id is the id of the robot;
+- constraining_agent includes a list of agents that block the last action of the agent_id;
+
 
 
 ### Requirements
