@@ -126,6 +126,12 @@ std::vector<std::tuple<std::string, int, double, std::string, std::pair<double, 
     return server_ptr->adg->getPlan(Robot_ID);
 }
 
+int getRobotIdx(std::string RobotID) {
+    std::lock_guard<std::mutex> guard(globalMutex);
+    int Robot_ID = server_ptr->startIndexToRobotID[RobotID];
+    return Robot_ID;
+}
+
 std::string getScenConfigName()
 {
     std::string target_path = server_ptr->curr_method_name + "/" + server_ptr->curr_map_name + "/" + std::to_string(server_ptr->numRobots) + "/" + server_ptr->curr_scen_name;
@@ -211,6 +217,7 @@ int main(int argc, char **argv) {
         srv.bind("update", &update);
         srv.bind("get_config", &getScenConfigName);
         srv.bind("update_finish_agent", &updateSimFinishTime);
+        srv.bind("get_robot_idx", &getRobotIdx);
         srv.bind("closeServer", [&srv]() {
             closeServer(srv);
         });
