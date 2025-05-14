@@ -144,8 +144,8 @@ private:
     int lineExistFlag = 0;
     bool terminateFlag = false;
 
-    std::ofstream outputFile;
-    std::string outputDir;
+    // std::ofstream outputFile;
+    // std::string outputDir;
 
     bool is_initialized = false;
 };
