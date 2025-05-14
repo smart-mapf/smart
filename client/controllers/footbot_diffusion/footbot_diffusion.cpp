@@ -345,7 +345,7 @@ double CFootBotDiffusion::getReferenceSpeed(double dist)
     } else if (dist > 0) {
         dist_flag = 1;
     }
-    return dist_flag * sqrt(2*m_linearAcceleration*std::abs(dist))/dt;
+    return dist_flag * std::min(sqrt(2*m_linearAcceleration*std::abs(dist)*10), m_fWheelVelocity);
 }
 
 std::pair<Real, Real> CFootBotDiffusion::Move(CVector3& targetPos, CVector3& currPos, Real currAngle, Real tolerance = 1.0f)
