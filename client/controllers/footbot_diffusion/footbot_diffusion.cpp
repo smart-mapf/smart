@@ -133,7 +133,7 @@ void CFootBotDiffusion::ControlStep() {
 
         std::vector<outputTuple> actions = client->call("init", robot_id).as<std::vector<outputTuple>>();
         // outputDir = client->call("get_config").as<std::string>();
-        agent_idx_in_server = client->call("get_robot_idx").as<int>();
+        agent_idx_in_server = client->call("get_robot_idx", robot_id).as<int>();
         // outputDir = "client_output/"+outputDir+"/";
         insertActions(actions);
 

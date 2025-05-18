@@ -89,12 +89,16 @@ public:
     }
 
     void returnProgress() {
-        std::cout << "{";
-        val("type","adg_progress");
-        for (int agent_id = 0; agent_id < num_robots; agent_id++) {
-            findConstraining(agent_id);
-        }
-        std::cout << "}" << std::endl;
+        item(
+            val("type", "adg_progress");
+            key_log("constraints", 
+                list(
+                    for (int agent_id = 0; agent_id < num_robots; agent_id++) {
+                        obj_log(findConstraining(agent_id));
+                    }
+                )
+            );
+        )
     }
 
 private:

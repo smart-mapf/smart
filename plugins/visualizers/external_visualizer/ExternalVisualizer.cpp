@@ -8,6 +8,7 @@
 #include <argos3/plugins/robots/foot-bot/simulator/footbot_entity.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.h>
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_render.h>
+#include <array>
 #include <fmt/core.h>
 
 #include "log.h"
@@ -18,9 +19,17 @@ using namespace std;
 using namespace std::chrono;
 
 void ExternalVisualizer::Capture() {
-  auto &instance = CSimulator::GetInstance();
-  auto &space = instance.GetSpace();
-  auto &bots = space.GetEntitiesByType("foot-bot");
+  auto &space = CSimulator::GetInstance().GetSpace();
+
+  std::vector<std::pair<std::string, CFootBotEntity*>> bots;
+  for (const auto &it : space.GetEntitiesByType("foot-bot")) {
+    auto &bot = *any_cast<CFootBotEntity *>(it.second);
+    auto index = bot.GetConfigurationNode()->GetAttributeOrDefault("index", "default");
+    bots.emplace_back(index, &bot);
+  }
+
+  std::sort(bots.begin(), bots.end(), [](const auto &a, const auto &b) { return stoi(a.first) < stoi(b.first); });
+
   item(
     val("type", "tick"); 
     val("clock", space.GetSimulationClock());
@@ -30,16 +39,15 @@ void ExternalVisualizer::Capture() {
             auto &bot = *any_cast<CFootBotEntity *>(it.second);
             auto &anchor = bot.GetEmbodiedEntity().GetOriginAnchor();
             auto &rotation = anchor.Orientation;
-            auto &p = anchor.Position;
             CRadians cZAngle;
             CRadians cYAngle;
             CRadians cXAngle;
             rotation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
             obj(
-              val("id", bot.GetId()); 
-              val("x", p.GetX(), "{:.2f}");
-              val("y", p.GetY(), "{:.2f}"); 
-              val("z", p.GetZ(), "{:.2f}");
+              val("id", bot.GetConfigurationNode()->GetAttributeOrDefault("index","default"));
+              val("x", anchor.Position.GetX(), "{:.2f}");
+              val("y", anchor.Position.GetY(), "{:.2f}"); 
+              val("z", anchor.Position.GetZ(), "{:.2f}");
               val("rx", cXAngle.GetValue(), "{:.2f}");
               val("ry", cYAngle.GetValue(), "{:.2f}");
               val("rz", cZAngle.GetValue(), "{:.2f}");

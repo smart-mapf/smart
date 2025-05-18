@@ -27,9 +27,10 @@ type Options = {
 };
 
 export type Step = {
+  type: "tick";
   clock: number;
   agents: {
-    id: string;
+    id: number;
     x: number;
     y: number;
     z: number;
@@ -39,10 +40,41 @@ export type Step = {
   }[];
 };
 
+export type AdgProgress = {
+  type: "adg_progress";
+  constraints: {
+    constraining_agent: {
+      id: number;
+    }[];
+  }[];
+};
+
 export type Output =
   | Step
   | { type: "error"; error: any }
+  | AdgProgress
   | Record<never, never>;
+
+async function* streamLines(stream: AsyncIterableIterator<Uint8Array>) {
+  let leftover = "";
+
+  for await (const c of stream) {
+    const decoder = new TextDecoder();
+    const chunk = decoder.decode(c);
+    // Ensure we are working with string data
+    const text = leftover + chunk.toString();
+    const lines = text.split(/\r?\n/);
+    leftover = lines.pop()!; // Save the last (possibly incomplete) line
+
+    for (const line of lines) {
+      yield line;
+    }
+  }
+
+  if (leftover) {
+    yield leftover; // Yield any remaining text after stream ends
+  }
+}
 
 /**
  * This function runs a simulation using the provided map, scenario, paths, and number of agents.
@@ -83,20 +115,13 @@ export async function run({ map, paths, agents, scen }: Options) {
 
   return {
     async *values() {
-      const decoder = new TextDecoder();
-      let buffer = "";
-      for await (const line of out.stdout.values()) {
-        const text = decoder.decode(line);
-        if (text.endsWith("\n")) {
-          try {
-            const out = load(buffer + text);
-            if (isPlainObject(out)) yield out as Output;
-          } catch (e) {
-            // Ignore parse errors
-          }
-          buffer = "";
-        } else {
-          buffer += text;
+      for await (const line of streamLines(out.stdout.values())) {
+        try {
+          const out = load(line);
+          if (isPlainObject(out)) yield out as Output;
+        } catch (e) {
+          console.log(line);
+          // Ignore parse errors
         }
       }
     },

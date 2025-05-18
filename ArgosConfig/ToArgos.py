@@ -66,8 +66,8 @@ def create_xml(map_data, output_file_path, width, height, robot_init_pos):
 
     tree = ET.ElementTree(arena)
 
-    for x, y in robot_init_pos:
-        foot_bot = ET.SubElement(arena, "foot-bot", id=f"fb_{x}_{y}")
+    for i, (x, y) in enumerate(robot_init_pos):
+        foot_bot = ET.SubElement(arena, "foot-bot", id=f"fb_{x}_{y}", index=f"{i}")
         x, y = -int(y), -int(x)
         body = ET.SubElement(foot_bot, "body", position=f"{x},{y},0", orientation="0,0,0")
         controller = ET.SubElement(foot_bot, "controller", config="fdc")
@@ -139,8 +139,8 @@ def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr
     # tree = ET.ElementTree(arena)
 
     agent_count = 0
-    for x, y in robot_init_pos:
-        foot_bot = ET.SubElement(arena, "foot-bot", id=f"fb_{x}_{y}")
+    for i, (x, y) in enumerate(robot_init_pos):
+        foot_bot = ET.SubElement(arena, "foot-bot", id=f"fb_{x}_{y}", index=f"{i}")
         x, y = -int(y), -int(x)
         body = ET.SubElement(foot_bot, "body", position=f"{x},{y},0", orientation="0,0,0")
         controller = ET.SubElement(foot_bot, "controller", config="fdc")
