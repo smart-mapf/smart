@@ -12,8 +12,18 @@ find_library(ARGOS_FOOTBOT_LIB
     PATHS /usr/lib/argos3/
 )
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 QUIET COMPONENTS Widgets)
+if(Qt6_FOUND)
+    set(QT_VERSION 6)
+    set(QT_PACKAGE_PREFIX Qt6)
+else()
+    find_package(Qt5 REQUIRED COMPONENTS Widgets)
+    set(QT_VERSION 5)
+    set(QT_PACKAGE_PREFIX Qt5)
+endif()
+
+message(STATUS "Using Qt${QT_VERSION}")
 
 add_library(${PROJECT_NAME} SHARED ExternalVisualizer.cpp)
 
-target_link_libraries(${PROJECT_NAME} fmt::fmt ${ARGOS_LIBRARIES} ${ARGOS_LDFLAGS} ${ARGOS_FOOTBOT_LIB} Qt6::Widgets)
+target_link_libraries(${PROJECT_NAME} fmt::fmt ${ARGOS_LIBRARIES} ${ARGOS_LDFLAGS} ${ARGOS_FOOTBOT_LIB} ${QT_PACKAGE_PREFIX}::Widgets)
