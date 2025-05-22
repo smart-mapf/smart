@@ -128,7 +128,7 @@ export async function run({ map, paths, agents, scen }: Options) {
           console.log(line);
           // Ignore parse errors
         }
-        if (buffer.length >= 100) {
+        if (buffer.length >= 64) {
           yield buffer;
           buffer = [];
         }
