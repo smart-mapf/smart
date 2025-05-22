@@ -115,15 +115,25 @@ export async function run({ map, paths, agents, scen }: Options) {
 
   return {
     async *values() {
+      let buffer: Output[] = [];
       for await (const line of streamLines(out.stdout.values())) {
         try {
           const out = load(line);
-          if (isPlainObject(out)) yield out as Output;
+          if (isPlainObject(out)) {
+            if ("type" in out && out.type === "tick") {
+              buffer.push(out as Output);
+            }
+          }
         } catch (e) {
           console.log(line);
           // Ignore parse errors
         }
+        if (buffer.length >= 100) {
+          yield buffer;
+          buffer = [];
+        }
       }
+      yield buffer;
     },
     async dispose() {
       await file(tmp.map).delete();
