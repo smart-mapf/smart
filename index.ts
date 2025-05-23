@@ -1,7 +1,7 @@
-import { file, spawn, write } from "bun";
+import { file, readableStreamToText, spawn, write } from "bun";
 import { getPort } from "get-port-please";
 import { load } from "js-yaml";
-import { isObject, isPlainObject } from "lodash";
+import { has, isObject, isPlainObject } from "lodash";
 import { temporaryFile } from "tempy";
 
 type Options = {
@@ -52,6 +52,7 @@ export type AdgProgress = {
 export type Output =
   | Step
   | { type: "error"; error: any }
+  | { type: "message"; content: string }
   | AdgProgress
   | Record<never, never>;
 
@@ -74,6 +75,22 @@ async function* streamLines(stream: AsyncIterableIterator<Uint8Array>) {
   if (leftover) {
     yield leftover; // Yield any remaining text after stream ends
   }
+}
+
+async function* buffered<T>(a: AsyncIterableIterator<T>, size = 64) {
+  let buffer: T[] = [];
+  for await (const item of a) {
+    buffer.push(item);
+    if (buffer.length >= size) {
+      yield buffer;
+      buffer = [];
+    }
+  }
+  yield buffer;
+}
+
+function isOutput(a: unknown): a is Output {
+  return isPlainObject(a) && has(a, "type");
 }
 
 /**
@@ -103,6 +120,7 @@ export async function run({ map, paths, agents, scen }: Options) {
       `--port=${await getPort()}`,
     ],
     {
+      stderr: "pipe",
       cwd: import.meta.dir,
       env: {
         ...process.env,
@@ -115,25 +133,32 @@ export async function run({ map, paths, agents, scen }: Options) {
 
   return {
     async *values() {
-      let buffer: Output[] = [];
-      for await (const line of streamLines(out.stdout.values())) {
-        try {
-          const out = load(line);
-          if (isPlainObject(out)) {
-            if ("type" in out && out.type === "tick") {
-              buffer.push(out as Output);
+      async function* f(): AsyncGenerator<Output> {
+        for await (const line of streamLines(out.stdout.values())) {
+          try {
+            const out = load(line);
+            if (isOutput(out) && "type" in out) {
+              switch (out.type) {
+                case "tick":
+                  yield out as Output;
+                  break;
+                default:
+                  // Ignore other event types for now
+                  break;
+              }
             }
+            // Do nothing for now if output is parsable but not an output
+          } catch (e) {
+            console.log(line);
+            yield { type: "message", content: line };
+            // Ignore parse errors
           }
-        } catch (e) {
-          console.log(line);
-          // Ignore parse errors
-        }
-        if (buffer.length >= 64) {
-          yield buffer;
-          buffer = [];
         }
       }
-      yield buffer;
+      yield* buffered(f());
+    },
+    errors() {
+      return readableStreamToText(out.stderr);
     },
     async dispose() {
       await file(tmp.map).delete();
