@@ -8,7 +8,7 @@ int getOrientation(int x1, int y1, int x2, int y2) {
     }
 }
 
-void processAgentActions(const vector<Point>& points, vector<Step>& steps, int agentId) {
+void processAgentActions(const vector<Point>& points, vector<Step>& steps, bool flipped_coord) {
     steps.clear();
     int currentOrientation = 0;
     double currentTime = 0;
@@ -17,6 +17,9 @@ void processAgentActions(const vector<Point>& points, vector<Step>& steps, int a
             steps.push_back({points[i].x, points[i].y, currentOrientation, currentTime});
         } else {
             int neededOrientation = getOrientation(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+            if (not flipped_coord) {
+                neededOrientation = 3 - neededOrientation;
+            }
             if (neededOrientation != currentOrientation) {
                 steps.push_back({points[i-1].x, points[i-1].y, neededOrientation, currentTime});
                 currentOrientation = neededOrientation;
@@ -26,7 +29,7 @@ void processAgentActions(const vector<Point>& points, vector<Step>& steps, int a
     }
 }
 
-void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& steps, int agentId) {
+void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& steps, bool flipped_coord) {
     steps.clear();
     int currentOrientation = 0;
     double currentTime = 0.0;
@@ -36,6 +39,9 @@ void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& st
             steps.push_back({points[i].x, points[i].y, currentOrientation, currentTime});
         } else {
             int neededOrientation = getOrientation(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+            if (not flipped_coord) {
+                neededOrientation = 3 - neededOrientation;
+            }
             if (neededOrientation != currentOrientation) {
                 steps.push_back({points[i-1].x, points[i-1].y, neededOrientation, currentTime});
                 currentOrientation = neededOrientation;
@@ -65,8 +71,12 @@ vector<Point> parseLine(const string& line) {
         }
         if (std::abs(prev_x - x) + std::abs(prev_y - y) >= 2) {
             raiseError("Invalid Plan");
+            // std::cerr << "Invalid Plan, move from " << prev_x << "," << prev_y << ", to: " <<
+            // x << "," << y << std::endl;
         }
         points.push_back({x, y, time++});
+        prev_x = x;
+        prev_y = y;
         ss >> ignore >> ignore;
     }
 
@@ -93,6 +103,8 @@ vector<Point> parseLineContinuous(const string& line) {
             raiseError("Invalid Plan");
         }
         points.push_back({x, y, t});
+        prev_x = x;
+        prev_y = y;
         ss >> ignore >> ignore;
     }
 
@@ -201,6 +213,8 @@ void raiseError(const string &msg) {
                 msg
             );
         )
+    std::cerr << msg << std::endl;
+    exit(-1);
 }
 
 
@@ -226,7 +240,8 @@ bool parseEntirePlan(const std::string& input_file,
             if (!line.empty()) {
                 std::vector<Point> points = parseLine(line);
                 raw_cost += static_cast<double> (points.size());
-                processAgentActions(points, tmp_plan, agentId++);
+                processAgentActions(points, tmp_plan, flipped_coord);
+                agentId++;
             }
             raw_plan.push_back(tmp_plan);
         }
@@ -243,7 +258,8 @@ bool parseEntirePlan(const std::string& input_file,
             if (!line.empty()) {
                 vector<Point> points = parseLineContinuous(line);
                 raw_cost += static_cast<double> (points.size());
-                processAgentActionsContinuous(points, tmp_plan, agentId++);
+                processAgentActionsContinuous(points, tmp_plan, flipped_coord);
+                agentId++;
             }
             raw_plan.push_back(tmp_plan);
         }

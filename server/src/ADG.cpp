@@ -56,14 +56,14 @@ ADG::ADG(const std::vector<std::vector<Action>> &plans) {
             found_conflict = true;
           }
           if (found_conflict) {
-            if (i == 0 and k == 2) {
-              printf("Agents %d and %d collide at action [(%f, %f)->(%f, %f)] "
-                     "and action [(%f, %f)->(%f, %f)]\n",
-                     i, k, plans[i][j].start.first, plans[i][j].start.second,
-                     plans[i][j].goal.first, plans[i][j].goal.second,
-                     plans[k][l].start.first, plans[k][l].start.second,
-                     plans[k][l].goal.first, plans[k][l].goal.second);
-            }
+            // if (i == 0 and k == 2) {
+            //   printf("Agents %d and %d collide at action [(%f, %f)->(%f, %f)] "
+            //          "and action [(%f, %f)->(%f, %f)]\n",
+            //          i, k, plans[i][j].start.first, plans[i][j].start.second,
+            //          plans[i][j].goal.first, plans[i][j].goal.second,
+            //          plans[k][l].start.first, plans[k][l].start.second,
+            //          plans[k][l].goal.first, plans[k][l].goal.second);
+            // }
             adg_stats.type2EdgeCount++;
             if (not conflict_pair_table[i][k]) {
               conflict_pair_table[i][k] = true;
@@ -78,6 +78,7 @@ ADG::ADG(const std::vector<std::vector<Action>> &plans) {
 
   if (hasCycle()) {
     raiseError("Find cycle!");
+    // std::cerr << "Find cycle!" << std::endl;
   }
 }
 

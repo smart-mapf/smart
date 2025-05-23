@@ -1,5 +1,13 @@
 # Scalable Multi-Agent Realistic Testbed (SMART)
 
+### Log
+ - Change the input format of the MAPF plan to (x, y, t) or (y, x, t). The example paths are updated accordingly.
+ - Add the flip coordinate argument (--flip_coord). This indicates if the MAPF plan is (x, y, t) or (y, x, t). If --flip_coord = True, the plan is in (y, x, t) format.
+ - Add circle detection function and MAPF plan checker. If the MAPF plan is invalid, raise error and exits:
+  ```
+  "type: adg_error"
+  ```
+
 ### Output format for ADG progress
 
 We return the current progress of ADG in the following format:

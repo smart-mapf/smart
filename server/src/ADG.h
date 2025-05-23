@@ -194,7 +194,7 @@ public:
             }
         }
 
-        std::cout << "No cycle detected.\n";
+        // std::cout << "No cycle detected.\n";
         return false;
     }
 
