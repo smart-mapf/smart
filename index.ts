@@ -77,7 +77,7 @@ async function* streamLines(stream: AsyncIterableIterator<Uint8Array>) {
   }
 }
 
-async function* buffered<T>(a: AsyncIterableIterator<T>, size = 64) {
+async function* buffered<T>(a: AsyncIterableIterator<T>, size = 4) {
   let buffer: T[] = [];
   for await (const item of a) {
     buffer.push(item);
@@ -124,9 +124,8 @@ export async function run({ map, paths, agents, scen }: Options) {
       cwd: import.meta.dir,
       env: {
         ...process.env,
-        ARGOS_PLUGIN_PATH: `${
-          import.meta.dir
-        }/plugins/visualizers/external_visualizer/build`,
+        ARGOS_PLUGIN_PATH: `${import.meta.dir
+          }/plugins/visualizers/external_visualizer/build`,
       },
     }
   );
@@ -147,11 +146,11 @@ export async function run({ map, paths, agents, scen }: Options) {
                   yield out;
                   ticked = true;
                   break;
-                case 'adg_progress':
+                case "adg_progress":
                   if (ticked) {
                     yield out;
                     ticked = false;
-                  };
+                  }
                   break;
                 default:
                   // Ignore other event types for now
