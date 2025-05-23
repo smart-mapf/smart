@@ -131,7 +131,10 @@ export async function run({ map, paths, agents, scen }: Options) {
     }
   );
 
+  const errors = readableStreamToText(out.stderr);
+
   return {
+    errors,
     async *values() {
       async function* f(): AsyncGenerator<Output> {
         for await (const line of streamLines(out.stdout.values())) {
@@ -156,9 +159,6 @@ export async function run({ map, paths, agents, scen }: Options) {
         }
       }
       yield* buffered(f());
-    },
-    errors() {
-      return readableStreamToText(out.stderr);
     },
     async dispose() {
       await file(tmp.map).delete();
