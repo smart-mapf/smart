@@ -75,6 +75,10 @@ ADG::ADG(const std::vector<std::vector<Action>> &plans) {
       }
     }
   }
+
+  if (hasCycle()) {
+    raiseError("Find cycle!");
+  }
 }
 
 void printEdge() {}

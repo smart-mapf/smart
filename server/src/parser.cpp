@@ -50,12 +50,22 @@ vector<Point> parseLine(const string& line) {
     vector<Point> points;
     stringstream ss(line);
     char ignore;
+    bool first_loc = true;
+    int prev_x = 0, prev_y = 0;
     int x, y;
     double time = 1.0;
 
     ss.ignore(100, ':');
 
     while (ss >> ignore >> x >> ignore >> y >> ignore) {
+        if (first_loc) {
+            prev_x = x;
+            prev_y = y;
+            first_loc = false;
+        }
+        if (std::abs(prev_x - x) + std::abs(prev_y - y) >= 2) {
+            raiseError("Invalid Plan");
+        }
         points.push_back({x, y, time++});
         ss >> ignore >> ignore;
     }
@@ -67,11 +77,21 @@ vector<Point> parseLineContinuous(const string& line) {
     vector<Point> points;
     stringstream ss(line);
     char ignore;
+    bool first_loc = true;
+    int prev_x = 0, prev_y = 0;
     int x, y;
     double t;
 
     ss.ignore(100, ':');
     while (ss >> ignore >> x >> ignore >> y >> ignore >> t >> ignore) {
+        if (first_loc) {
+            prev_x = x;
+            prev_y = y;
+            first_loc = false;
+        }
+        if (std::abs(prev_x - x) + std::abs(prev_y - y) >= 2) {
+            raiseError("Invalid Plan");
+        }
         points.push_back({x, y, t});
         ss >> ignore >> ignore;
     }
@@ -174,6 +194,16 @@ void showActionsPlan(std::vector<std::vector<Action>>& plans) {
     }
 }
 
+void raiseError(const string &msg) {
+    item(
+            val("type", "adg_error");
+            key_log("info",
+                msg
+            );
+        )
+}
+
+
 bool parseEntirePlan(const std::string& input_file,
                      std::vector<std::vector<Action>>& plans,
                      double& raw_cost,
@@ -194,7 +224,7 @@ bool parseEntirePlan(const std::string& input_file,
         while (getline(inFile, line)) {
             std::vector<Step> tmp_plan;
             if (!line.empty()) {
-                vector<Point> points = parseLine(line);
+                std::vector<Point> points = parseLine(line);
                 raw_cost += static_cast<double> (points.size());
                 processAgentActions(points, tmp_plan, agentId++);
             }

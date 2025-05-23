@@ -11,7 +11,6 @@
 #include <iomanip>
 #include <unordered_set>
 
-#include "log.h"
 #include "parser.h"
 
 typedef std::vector<std::tuple<std::string, int, double, std::string, std::pair<double, double>, std::pair<double, double>>> SIM_PLAN;
@@ -143,7 +142,30 @@ public:
                 return true;
             }
         }
+        // Visit its type-1 neighbor
+        if (node_id + 1 < graph[agent_id].size()) {
+            int next_agent = agent_id;
+            int next_node = node_id + 1;
 
+            if (visited[next_agent].count(next_node) == 0) {
+                parent[{next_agent, next_node}] = {agent_id, node_id};
+                if (dfs(next_agent, next_node, visited, recStack, graph, parent, cycle_path)) {
+                    return true;
+                }
+            } else if (recStack[next_agent].count(next_node)) {
+                // Cycle detected!
+                // Reconstruct cycle path
+                loopNode current = {agent_id, node_id};
+                cycle_path.push_back({next_agent, next_node});
+                while (current != loopNode{next_agent, next_node}) {
+                    cycle_path.push_back(current);
+                    current = parent[current];
+                }
+                cycle_path.push_back({next_agent, next_node}); // close the loop
+                std::reverse(cycle_path.begin(), cycle_path.end());
+                return true;
+            }
+        }
         recStack[agent_id].erase(node_id);
         return false;
     }
