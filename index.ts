@@ -137,13 +137,21 @@ export async function run({ map, paths, agents, scen }: Options) {
     errors,
     async *values() {
       async function* f(): AsyncGenerator<Output> {
+        let ticked = false;
         for await (const line of streamLines(out.stdout.values())) {
           try {
             const out = load(line);
             if (isOutput(out) && "type" in out) {
               switch (out.type) {
                 case "tick":
-                  yield out as Output;
+                  yield out;
+                  ticked = true;
+                  break;
+                case 'adg_progress':
+                  if (ticked) {
+                    yield out;
+                    ticked = false;
+                  };
                   break;
                 default:
                   // Ignore other event types for now
