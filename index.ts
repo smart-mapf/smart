@@ -119,7 +119,7 @@ export async function run({ map, paths, agents, scen, flipXY }: Options) {
       `--num_agents=${agents}`,
       `--path_filename=${tmp.paths}`,
       `--port=${await getPort()}`,
-      `--flip_coord=${flipXY ? "True" : "False"}`,
+      `--flip_coord=${flipXY ? "1" : "0"}`,
     ],
     {
       stderr: "pipe",
