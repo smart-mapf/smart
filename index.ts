@@ -77,7 +77,7 @@ async function* streamLines(stream: AsyncIterableIterator<Uint8Array>) {
   }
 }
 
-async function* buffered<T>(a: AsyncIterableIterator<T>, size = 4) {
+async function* buffered<T>(a: AsyncIterableIterator<T>, size = 64) {
   let buffer: T[] = [];
   for await (const item of a) {
     buffer.push(item);
@@ -172,6 +172,7 @@ export async function run({ map, paths, agents, scen }: Options) {
       await file(tmp.paths).delete();
       await file(tmp.scen).delete();
       out.kill();
+      console.warn('Stopped')
     },
   };
 }
