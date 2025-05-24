@@ -24,6 +24,7 @@ type Options = {
    * The number of agents used in the simulation.
    */
   agents: number;
+  flipXY: boolean;
 };
 
 export type Step = {
@@ -98,7 +99,7 @@ function isOutput(a: unknown): a is Output {
  * It creates temporary files for the map and paths, runs the simulation using a Python script,
  * and cleans up the temporary files after the simulation is complete.
  */
-export async function run({ map, paths, agents, scen }: Options) {
+export async function run({ map, paths, agents, scen, flipXY }: Options) {
   const tmp = {
     map: temporaryFile({ extension: "map" }),
     scen: temporaryFile({ extension: "scen" }),
@@ -118,14 +119,16 @@ export async function run({ map, paths, agents, scen }: Options) {
       `--num_agents=${agents}`,
       `--path_filename=${tmp.paths}`,
       `--port=${await getPort()}`,
+      `--flip-coord=${flipXY ? "True" : "False"}`,
     ],
     {
       stderr: "pipe",
       cwd: import.meta.dir,
       env: {
         ...process.env,
-        ARGOS_PLUGIN_PATH: `${import.meta.dir
-          }/plugins/visualizers/external_visualizer/build`,
+        ARGOS_PLUGIN_PATH: `${
+          import.meta.dir
+        }/plugins/visualizers/external_visualizer/build`,
       },
     }
   );
@@ -172,7 +175,7 @@ export async function run({ map, paths, agents, scen }: Options) {
       await file(tmp.paths).delete();
       await file(tmp.scen).delete();
       out.kill();
-      console.warn('Stopped')
+      console.warn("Stopped");
     },
   };
 }
