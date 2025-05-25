@@ -49,12 +49,17 @@ export type AdgProgress = {
     }[];
   }[];
 };
+export type AdgError = {
+  type: "adg_error";
+  info: string;
+};
 
 export type Output =
   | Step
+  | AdgProgress
+  | AdgError
   | { type: "error"; error: any }
   | { type: "message"; content: string }
-  | AdgProgress
   | Record<never, never>;
 
 async function* streamLines(stream: AsyncIterableIterator<Uint8Array>) {
@@ -154,6 +159,9 @@ export async function run({ map, paths, agents, scen, flipXY }: Options) {
                     yield out;
                     ticked = false;
                   }
+                  break;
+                case "adg_error":
+                  yield out;
                   break;
                 default:
                   // Ignore other event types for now
