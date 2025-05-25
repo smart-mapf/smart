@@ -1,0 +1,4 @@
+runtime,num of collisions,solution cost,initial collisions,initial solution cost,sum of distances,iterations,group size,runtime of initial solution,area under curve,LL expanded nodes,LL generated,LL reopened,LL runs,preprocessing runtime,solver name,instance name
+0.00562383,0,1171,1,1206,928,3,6,0.002535,0.00308883,7505,9496,1942,33,0.00163083,InitLNS(PP),./data/maze-32-32-4/scen-random/maze-32-32-4-random-1.scen
+0.0115971,0,3292,2,3338,2350,5,5.75,0.006092,0.00602198,14860,29146,376,74,0.00414371,InitLNS(PP),./data/maze-32-32-4/scen-random/maze-32-32-4-random-1.scen
+0.317575,0,7755,98,6602,4450,25,7.95833,0.053953,6.32819,430003,329084,231151,285,0.00548546,InitLNS(PP),./data/maze-32-32-4/scen-random/maze-32-32-4-random-1.scen

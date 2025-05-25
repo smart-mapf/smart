@@ -1,0 +1,2 @@
+runtime,num of collisions,solution cost,initial collisions,initial solution cost,sum of distances,iterations,group size,runtime of initial solution,area under curve,LL expanded nodes,LL generated,LL reopened,LL runs,preprocessing runtime,solver name,instance name
+3.71284,0,65686,12,63876,26592,10,8,3.11031,3.20308,4666939,2052025,3664623,573,0.0917218,InitLNS(PP),./data/den312d/scen-random/den312d-random-1.scen
