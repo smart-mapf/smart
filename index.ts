@@ -64,7 +64,7 @@ export type AdgError = {
 
 export type Output =
   | Step
-  | StatusChange
+  | StateChange
   | AdgProgress
   | AdgError
   | { type: "error"; error: any }
