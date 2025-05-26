@@ -41,6 +41,14 @@ export type Step = {
   }[];
 };
 
+type AgentState = "idle" | "finished" | "initialized" | "active";
+
+export type StateChange = {
+  type: "state_change";
+  value: AgentState;
+  agent: number | null;
+};
+
 export type AdgProgress = {
   type: "adg_progress";
   constraints: {
@@ -56,6 +64,7 @@ export type AdgError = {
 
 export type Output =
   | Step
+  | StatusChange
   | AdgProgress
   | AdgError
   | { type: "error"; error: any }
@@ -150,6 +159,9 @@ export async function run({ map, paths, agents, scen, flipXY }: Options) {
             const out = load(line);
             if (isOutput(out) && "type" in out) {
               switch (out.type) {
+                case "state_change":
+                  yield out;
+                  break;
                 case "tick":
                   yield out;
                   ticked = true;
