@@ -6,6 +6,7 @@ ADG::ADG(const std::vector<std::vector<Action>> &plans) {
   finished_node_idx.resize(num_robots, -1);
   enqueue_nodes_idx.resize(num_robots);
   graph.resize(num_robots);
+  agent_act_status.resize(num_robots, UNINITIALIZED);
   for (int i = 0; i < num_robots; i++) {
     int j = 0;
     for (const auto &action : plans[i]) {
@@ -237,6 +238,14 @@ SIM_PLAN ADG::getPlan(int agent_id) {
   SIM_PLAN sim_plan;
   std::vector<int> enque_acts;
   getAvailableNodes(agent_id, enque_acts);
+  if (enque_acts.empty() and (agent_act_status[agent_id] == ACTIVE or agent_act_status[agent_id] == UNINITIALIZED)) {
+    logStatusChange(std::to_string(agent_id), "idle");
+    agent_act_status[agent_id] = IDLE;
+  }
+  if (not enque_acts.empty() and (agent_act_status[agent_id] == IDLE or agent_act_status[agent_id] == UNINITIALIZED)) {
+    logStatusChange(std::to_string(agent_id), "active");
+    agent_act_status[agent_id] = ACTIVE;
+  }
   for (int enque_id : enque_acts) {
     const Action &action = graph[agent_id][enque_id].action;
     sim_plan.emplace_back(robotIDToStartIndex[action.robot_id], enque_id,

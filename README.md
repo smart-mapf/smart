@@ -1,6 +1,13 @@
 # Scalable Multi-Agent Realistic Testbed (SMART)
 
-### Log
+### Log May 26
+ - Stream the status change of agents to browser. Status values: 
+   - "initialized": finish the initialization;
+   - "active": perform actions;
+   - "idle": stay idle;
+   - "finished": finish all its plan;
+
+### Log May 23
  - Change the input format of the MAPF plan to (x, y, t) or (y, x, t). The example paths are updated accordingly.
  - Add the flip coordinate argument (--flip_coord). This indicates if the MAPF plan is (x, y, t) or (y, x, t). If --flip_coord = True, the plan is in (y, x, t) format.
  - Add circle detection function and MAPF plan checker. If the MAPF plan is invalid, raise error and exits:
@@ -101,7 +108,7 @@ make
 #### Running with visualization
 
 ```
-python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=20 --path_filename=example_paths.txt
+python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_yx.txt --flip_coord=1
 ```
 
 #### Running in headless mode

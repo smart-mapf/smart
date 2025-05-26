@@ -45,3 +45,15 @@ void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& st
 bool parseEntirePlan(const std::string& input_file, std::vector<std::vector<Action>>& plans,
                      double& raw_cost, bool flipped_coord = true, PlanType file_type = PlanType::CONTINUOUS);
 void raiseError(const string& msg);
+
+inline void logStatusChange(const std::string& agent_id_str, const std::string& status) {
+    item(
+    val("type", "state_change");
+    str_log("agent",
+        agent_id_str
+    );
+    str_log("value",
+        status
+    );
+)
+}

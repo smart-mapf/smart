@@ -95,6 +95,7 @@ std::string receive_update(std::string& RobotID, int node_ID) {
         if (server_ptr->agent_finish_time[Robot_ID] < 0) {
             server_ptr->agent_finish_time[Robot_ID] = duration;
             server_ptr->agents_finish[Robot_ID] = true;
+            logStatusChange(std::to_string(Robot_ID), "finished");
         }
     }
 
@@ -210,6 +211,7 @@ int main(int argc, char **argv) {
     std::string out_filename = vm["output_file"].as<string>();
     server_ptr = std::make_shared<ADG_Server>(filename, out_filename, vm["map_file"].as<string>(), 
         vm["scen_file"].as<string>(), vm["method_name"].as<string>(), vm["flip_coord"].as<bool>());
+    logStatusChange("null", "initialized");
 
     int port_number = vm["port_number"].as<int>();
     try {

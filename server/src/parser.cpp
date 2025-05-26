@@ -182,7 +182,6 @@ std::vector<std::vector<Action>> processActions(const std::vector<std::vector<St
 }
 
 void showStepPoints(std::vector<std::vector<Step>>& raw_plan){
-    return;
     for (size_t i = 0; i < raw_plan.size(); i++) {
         printf("Path of agent: %lu\n", i);
         for (auto& tmp_point: raw_plan[i]) {
@@ -195,7 +194,6 @@ void showStepPoints(std::vector<std::vector<Step>>& raw_plan){
 }
 
 void showActionsPlan(std::vector<std::vector<Action>>& plans) {
-    return;
     for (size_t i = 0; i < plans.size(); i++) {
         printf("Path of agent: %lu\n", i);
         for (auto &action: plans[i]) {
@@ -215,7 +213,7 @@ void raiseError(const string &msg) {
                 msg
             );
         )
-    std::cerr << msg << std::endl;
+    // std::cerr << msg << std::endl;
     exit(-1);
 }
 
@@ -266,9 +264,9 @@ bool parseEntirePlan(const std::string& input_file,
             raw_plan.push_back(tmp_plan);
         }
         inFile.close();
-        showStepPoints(raw_plan);
+        // showStepPoints(raw_plan);
         plans = processActions(raw_plan, flipped_coord);
-        showActionsPlan(plans);
+        // showActionsPlan(plans);
         return true;
     } else {
         std::cerr << "Unsupported path format!" << std::endl;

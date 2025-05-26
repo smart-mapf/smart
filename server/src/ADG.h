@@ -15,6 +15,13 @@
 
 typedef std::vector<std::tuple<std::string, int, double, std::string, std::pair<double, double>, std::pair<double, double>>> SIM_PLAN;
 
+enum AgentStatus {
+    UNINITIALIZED = 0,
+    ACTIVE = 1,
+    IDLE = 2,
+    FINISHED = 3,
+};
+
 struct Edge {
     int from_agent_id;
     int to_agent_id;
@@ -206,6 +213,7 @@ public:
     std::vector< int > finished_node_idx;
     std::vector< std::deque<int> > enqueue_nodes_idx;
     ADG_STATS adg_stats;
+    std::vector< AgentStatus > agent_act_status;
 
 private:
     std::vector<std::vector<ADGNode>> graph;
