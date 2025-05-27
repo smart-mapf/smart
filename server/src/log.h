@@ -11,8 +11,11 @@ public:
 
 inline NullBuffer Null;
 inline std::ostream NullStream( &Null );
-inline std::ostream& output_stream = std::cout;
+
 // inline std::ostream& output_stream = NullStream;
+inline std::ostream& output_stream = std::cout;
+
+
 
 #define key_log(key, rest)                                                         \
   output_stream << key << ": ";                                                         \
