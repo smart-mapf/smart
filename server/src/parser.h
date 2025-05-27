@@ -57,3 +57,18 @@ inline void logStatusChange(const std::string& agent_id_str, const std::string& 
     );
 )
 }
+
+inline void logFinishPercentage(int agent_id, int finished_nums, int total_nums) {
+    item(
+    val("type", "exec_progress");
+    str_log("agent",
+        std::to_string(agent_id)
+    );
+    str_log("finished",
+        std::to_string(finished_nums)
+    );
+    str_log("total",
+        std::to_string(total_nums)
+    );
+)
+}

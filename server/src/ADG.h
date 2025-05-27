@@ -65,6 +65,9 @@ public:
     bool getAvailableNodes(int robot_id, std::vector<int>& available_nodes);
     bool updateFinishedNode(int robot_id, int node_id);
     void setEnqueueNodes(int robot_id, std::vector<int>& enqueue_nodes);
+    void logAgentProgress(int robot_id) {
+        logFinishPercentage(robot_id, finished_node_idx[robot_id]+1, static_cast<int>(graph[robot_id].size()) );
+    }
     SIM_PLAN getPlan(int agent_id);
     bool isAgentFinished(int robot_id) {
         return finished_node_idx[robot_id] >= graph[robot_id].size()-1;
