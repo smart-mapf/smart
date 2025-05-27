@@ -238,20 +238,20 @@ SIM_PLAN ADG::getPlan(int agent_id) {
   SIM_PLAN sim_plan;
   std::vector<int> enque_acts;
   getAvailableNodes(agent_id, enque_acts);
-  if (enque_acts.empty() and (agent_act_status[agent_id] == ACTIVE or agent_act_status[agent_id] == UNINITIALIZED)) {
-    logStatusChange(std::to_string(agent_id), "idle");
-    agent_act_status[agent_id] = IDLE;
-  }
-  if (not enque_acts.empty() and (agent_act_status[agent_id] == IDLE or agent_act_status[agent_id] == UNINITIALIZED)) {
-    logStatusChange(std::to_string(agent_id), "active");
-    agent_act_status[agent_id] = ACTIVE;
-  }
   for (int enque_id : enque_acts) {
     const Action &action = graph[agent_id][enque_id].action;
     sim_plan.emplace_back(robotIDToStartIndex[action.robot_id], enque_id,
                           action.orientation, std::string(1, action.type),
                           action.start, action.goal);
     enqueue_nodes_idx[agent_id].push_back(enque_id);
+  }
+  if (enqueue_nodes_idx.empty() and (agent_act_status[agent_id] == ACTIVE or agent_act_status[agent_id] == UNINITIALIZED)) {
+    logStatusChange(std::to_string(agent_id), "idle");
+    agent_act_status[agent_id] = IDLE;
+  }
+  if (not enqueue_nodes_idx.empty() and (agent_act_status[agent_id] == IDLE or agent_act_status[agent_id] == UNINITIALIZED)) {
+    logStatusChange(std::to_string(agent_id), "active");
+    agent_act_status[agent_id] = ACTIVE;
   }
   return sim_plan;
 }
