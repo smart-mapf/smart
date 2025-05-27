@@ -3,28 +3,39 @@
 
 #define GET_MACRO(_1, _2, _3, NAME, ...) NAME
 
+class NullBuffer : public std::streambuf
+{
+public:
+  int overflow( int c ) override { return c; }
+};
+
+inline NullBuffer Null;
+inline std::ostream NullStream( &Null );
+inline std::ostream& output_stream = std::cout;
+// inline std::ostream& output_stream = NullStream;
+
 #define key_log(key, rest)                                                         \
-  cout << key << ": ";                                                         \
+  output_stream << key << ": ";                                                         \
   rest;
 
-#define str_log(key, value) cout << fmt::format("{}: {}, ", key, value);
+#define str_log(key, value) output_stream << fmt::format("{}: {}, ", key, value);
 
 #define formatted(key, value, fm)                                              \
-  cout << key << ": " << fmt::format(fm, value) << ", ";
+  output_stream << key << ": " << fmt::format(fm, value) << ", ";
 
 #define val(...) GET_MACRO(__VA_ARGS__, formatted, str_log, key)(__VA_ARGS__)
 
 #define obj_log(rest)                                                              \
-  cout << "{";                                                                 \
+  output_stream << "{";                                                                 \
   rest;                                                                        \
-  cout << "}, ";
+  output_stream << "}, ";
 
 #define list(rest)                                                             \
-  cout << "[";                                                                 \
+  output_stream << "[";                                                                 \
   rest;                                                                        \
-  cout << "], ";
+  output_stream << "], ";
 
 #define item(rest)                                                             \
-  cout << "{";                                                                 \
+  output_stream << "{";                                                                 \
   rest;                                                                        \
-  cout << "}" << endl;
+  output_stream << "}" << endl;

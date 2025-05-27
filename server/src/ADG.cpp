@@ -245,13 +245,15 @@ SIM_PLAN ADG::getPlan(int agent_id) {
                           action.start, action.goal);
     enqueue_nodes_idx[agent_id].push_back(enque_id);
   }
-  if (enqueue_nodes_idx.empty() and (agent_act_status[agent_id] == ACTIVE or agent_act_status[agent_id] == UNINITIALIZED)) {
+  if (enqueue_nodes_idx[agent_id].empty() and (agent_act_status[agent_id] == ACTIVE or agent_act_status[agent_id] == UNINITIALIZED)) {
     logStatusChange(std::to_string(agent_id), "idle");
     agent_act_status[agent_id] = IDLE;
+    // std::cout << agent_id << "become idle" << std::endl;
   }
-  if (not enqueue_nodes_idx.empty() and (agent_act_status[agent_id] == IDLE or agent_act_status[agent_id] == UNINITIALIZED)) {
+  if (not enqueue_nodes_idx[agent_id].empty() and (agent_act_status[agent_id] == IDLE or agent_act_status[agent_id] == UNINITIALIZED)) {
     logStatusChange(std::to_string(agent_id), "active");
     agent_act_status[agent_id] = ACTIVE;
+    // std::cout << agent_id << "become active" << std::endl;
   }
   return sim_plan;
 }
