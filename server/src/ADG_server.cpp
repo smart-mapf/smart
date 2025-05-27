@@ -97,6 +97,7 @@ std::string receive_update(std::string& RobotID, int node_ID) {
             server_ptr->agent_finish_time[Robot_ID] = duration;
             server_ptr->agents_finish[Robot_ID] = true;
             logStatusChange(std::to_string(Robot_ID), "finished");
+            server_ptr->adg->agent_act_status[Robot_ID] = FINISHED;
         }
     }
 
