@@ -1,5 +1,12 @@
 # Scalable Multi-Agent Realistic Testbed (SMART)
 
+### Log May 27
+ - Stream the execution progress to the browser: 
+   - "type": exec_progress;
+   - "agent": index of the agent;
+   - "finished": total number of finished actions;
+   - "total": total number of finished actions;
+
 ### Log May 26
  - Stream the status change of agents to browser. Status values: 
    - "initialized": finish the initialization;
