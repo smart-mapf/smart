@@ -41,7 +41,7 @@ export type Step = {
   }[];
 };
 
-type AgentState = "idle" | "finished" | "initialized" | "active";
+type AgentState = "idle" | "finished" | "initialized" | "active" | "unknown";
 
 export type StateChange = {
   type: "state_change";
