@@ -43,6 +43,13 @@ export type Step = {
 
 type AgentState = "idle" | "finished" | "initialized" | "active" | "unknown";
 
+export type ExecProgress = {
+  type: "exec_progress";
+  agent: number;
+  finished: number;
+  total: number;
+};
+
 export type StateChange = {
   type: "state_change";
   value: AgentState;
@@ -63,6 +70,7 @@ export type AdgError = {
 };
 
 export type Output =
+  | ExecProgress
   | Step
   | StateChange
   | AdgProgress
@@ -160,6 +168,9 @@ export async function run({ map, paths, agents, scen, flipXY }: Options) {
             if (isOutput(out) && "type" in out) {
               switch (out.type) {
                 case "state_change":
+                  yield out;
+                  break;
+                case "exec_progress":
                   yield out;
                   break;
                 case "tick":
