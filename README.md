@@ -1,5 +1,11 @@
 # Scalable Multi-Agent Realistic Testbed (SMART)
 
+### Log Jun 1
+ - Stream the simulation statistic to the browser, Format:
+   - "type": "stats",
+   - "mapf_plan_cost": xxx, // value of original MAPF cost
+   - "agent_exec_cost": [Agent_id0: time0, Agent_id1: time1, ...., Agent_idN: timeN] // A List with execution time for each robot, where Agent_idN is the index of the N-th robot 
+
 ### Log May 27
  - Stream the execution progress to the browser: 
    - "type": exec_progress;

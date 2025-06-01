@@ -43,8 +43,8 @@ public:
     std::string curr_method_name;
     int numRobots = 0;
     int step_cnt = 0;
+    double raw_plan_cost = -1.0;
 
 private:
     std::string path_filename_;
-    double raw_plan_cost = -1.0;
 };

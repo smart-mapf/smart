@@ -175,6 +175,21 @@ void closeServer(rpc::server& srv)
     // } else {
     //     std::cout << "BUG::exiting without finish all actions" << std::endl;
     // }
+    item(
+            val("type", "stats");
+            str_log("mapf_plan_cost",
+                server_ptr->raw_plan_cost
+            );
+            key_log("agent_exec_cost",
+                list(
+                    for (int agent_id = 0; agent_id < server_ptr->numRobots; agent_id++) {
+                        str_log(agent_id,
+                            server_ptr->agent_finish_sim_step[agent_id]
+                        );
+                    }
+                )
+            );
+        )
     server_ptr->saveStats();
     srv.stop();
 }
