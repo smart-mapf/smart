@@ -10,7 +10,7 @@ int getOrientation(int x1, int y1, int x2, int y2) {
     } else if (y2 == y1) {
         return x2 > x1 ? 2 : 0; // East or West
     } else {
-        std::cerr << "Error with orientation!" << std::endl;
+        raiseError("Invalid orient!\n");
         exit(-2);
     }
 }
