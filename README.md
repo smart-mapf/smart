@@ -1,32 +1,47 @@
 # Scalable Multi-Agent Realistic Testbed (SMART)
 
 ### Log Jun 1
- - Stream the simulation statistic to the browser, Format:
-   - "type": "stats",
-   - "mapf_plan_cost": xxx, // value of original MAPF cost
-   - "agent_exec_cost": [Agent_id0: time0, Agent_id1: time1, ...., Agent_idN: timeN] // A List with execution time for each robot, where Agent_idN is the index of the N-th robot 
+
+- Stream the simulation statistic to the browser, Format:
+
+```yaml
+type: stats,
+mapf_plan_cost: xxx, // value of original MAPF cost
+agent_exec_cost: { Agent_id0: time0, Agent_id1: time1, ...., Agent_idN: timeN } # A List with execution time for each robot, where Agent_idN is the index of the N-th robot
+```
 
 ### Log May 27
- - Stream the execution progress to the browser: 
-   - "type": exec_progress;
-   - "agent": index of the agent;
-   - "finished": total number of finished actions;
-   - "total": total number of finished actions;
+
+- Stream the execution progress to the browser:
+
+```yaml
+type: exec_progress;
+# type of the message
+agent: XXX;
+# index of the agent
+finished: XXX;
+# total number of finished actions
+total: XXX;
+# total number of all actions
+```
 
 ### Log May 26
- - Stream the status change of agents to browser. Status values: 
-   - "initialized": finish the initialization;
-   - "active": perform actions;
-   - "idle": stay idle;
-   - "finished": finish all its plan;
+
+- Stream the status change of agents to browser. Status values:
+  - "initialized": finish the initialization;
+  - "active": perform actions;
+  - "idle": stay idle;
+  - "finished": finish all its plan;
 
 ### Log May 23
- - Change the input format of the MAPF plan to (x, y, t) or (y, x, t). The example paths are updated accordingly.
- - Add the flip coordinate argument (--flip_coord). This indicates if the MAPF plan is (x, y, t) or (y, x, t). If --flip_coord = True, the plan is in (y, x, t) format.
- - Add circle detection function and MAPF plan checker. If the MAPF plan is invalid, raise error and exits:
-  ```
-  "type: adg_error"
-  ```
+
+- Change the input format of the MAPF plan to (x, y, t) or (y, x, t). The example paths are updated accordingly.
+- Add the flip coordinate argument (--flip_coord). This indicates if the MAPF plan is (x, y, t) or (y, x, t). If --flip_coord = True, the plan is in (y, x, t) format.
+- Add circle detection function and MAPF plan checker. If the MAPF plan is invalid, raise error and exits:
+
+```
+"type: adg_error"
+```
 
 ### Output format for ADG progress
 

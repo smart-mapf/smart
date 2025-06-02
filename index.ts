@@ -50,6 +50,14 @@ export type ExecProgress = {
   total: number;
 };
 
+export type Stats = {
+  type: "stats";
+  mapf_plan_cost: number;
+  agent_exec_cost: {
+    [agent: number]: number;
+  };
+};
+
 export type StateChange = {
   type: "state_change";
   value: AgentState;
@@ -71,6 +79,7 @@ export type AdgError = {
 
 export type Output =
   | ExecProgress
+  | Stats
   | Step
   | StateChange
   | AdgProgress
@@ -167,12 +176,6 @@ export async function run({ map, paths, agents, scen, flipXY }: Options) {
             const out = load(line);
             if (isOutput(out) && "type" in out) {
               switch (out.type) {
-                case "state_change":
-                  yield out;
-                  break;
-                case "exec_progress":
-                  yield out;
-                  break;
                 case "tick":
                   yield out;
                   ticked = true;
@@ -183,11 +186,9 @@ export async function run({ map, paths, agents, scen, flipXY }: Options) {
                     ticked = false;
                   }
                   break;
-                case "adg_error":
-                  yield out;
-                  break;
                 default:
-                  // Ignore other event types for now
+                  // If the output is not a tick or adg_progress, yield it directly
+                  yield out;
                   break;
               }
             }

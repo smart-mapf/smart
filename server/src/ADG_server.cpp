@@ -1,4 +1,5 @@
 #include "ADG_server.h"
+#include "log.h"
 
 std::vector<std::chrono::steady_clock::time_point> startTimers; // Start times for each robot
     // =======================
@@ -181,7 +182,7 @@ void closeServer(rpc::server& srv)
                 server_ptr->raw_plan_cost
             );
             key_log("agent_exec_cost",
-                list(
+                obj_log(
                     for (int agent_id = 0; agent_id < server_ptr->numRobots; agent_id++) {
                         str_log(agent_id,
                             server_ptr->agent_finish_sim_step[agent_id]
