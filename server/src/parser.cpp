@@ -1,10 +1,17 @@
 #include "parser.h"
 
 int getOrientation(int x1, int y1, int x2, int y2) {
+    if (x1 == x2 and y1 == y2) {
+        // indicate inplace waiting
+        return -1;
+    }
     if (x2 == x1) {
-        return y2 > y1 ? 1 : 3;
+        return y2 > y1 ? 1 : 3; // North or South
+    } else if (y2 == y1) {
+        return x2 > x1 ? 2 : 0; // East or West
     } else {
-        return x2 > x1 ? 2 : 0;
+        std::cerr << "Error with orientation!" << std::endl;
+        exit(-2);
     }
 }
 
@@ -17,9 +24,15 @@ void processAgentActions(const vector<Point>& points, vector<Step>& steps, bool 
             steps.push_back({points[i].x, points[i].y, currentOrientation, currentTime});
         } else {
             int neededOrientation = getOrientation(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+
             if (not flipped_coord) {
                 neededOrientation = 3 - neededOrientation;
             }
+
+            if (neededOrientation == -1 or neededOrientation == 4) {
+                neededOrientation = currentOrientation;
+            }
+
             if (neededOrientation != currentOrientation) {
                 steps.push_back({points[i-1].x, points[i-1].y, neededOrientation, currentTime});
                 currentOrientation = neededOrientation;
