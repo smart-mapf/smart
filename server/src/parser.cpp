@@ -1,14 +1,21 @@
 #include "parser.h"
 
 int getOrientation(int x1, int y1, int x2, int y2) {
+    if (x1 == x2 and y1 == y2) {
+        // indicate inplace waiting
+        return -1;
+    }
     if (x2 == x1) {
-        return y2 > y1 ? 1 : 3;
+        return y2 > y1 ? 1 : 3; // North or South
+    } else if (y2 == y1) {
+        return x2 > x1 ? 2 : 0; // East or West
     } else {
-        return x2 > x1 ? 2 : 0;
+        raiseError("Invalid orient!\n");
+        exit(-2);
     }
 }
 
-void processAgentActions(const vector<Point>& points, vector<Step>& steps, int agentId) {
+void processAgentActions(const vector<Point>& points, vector<Step>& steps, bool flipped_coord) {
     steps.clear();
     int currentOrientation = 0;
     double currentTime = 0;
@@ -17,6 +24,15 @@ void processAgentActions(const vector<Point>& points, vector<Step>& steps, int a
             steps.push_back({points[i].x, points[i].y, currentOrientation, currentTime});
         } else {
             int neededOrientation = getOrientation(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+
+            if (not flipped_coord) {
+                neededOrientation = 3 - neededOrientation;
+            }
+
+            if (neededOrientation == -1 or neededOrientation == 4) {
+                neededOrientation = currentOrientation;
+            }
+
             if (neededOrientation != currentOrientation) {
                 steps.push_back({points[i-1].x, points[i-1].y, neededOrientation, currentTime});
                 currentOrientation = neededOrientation;
@@ -26,7 +42,7 @@ void processAgentActions(const vector<Point>& points, vector<Step>& steps, int a
     }
 }
 
-void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& steps, int agentId) {
+void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& steps, bool flipped_coord) {
     steps.clear();
     int currentOrientation = 0;
     double currentTime = 0.0;
@@ -36,6 +52,9 @@ void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& st
             steps.push_back({points[i].x, points[i].y, currentOrientation, currentTime});
         } else {
             int neededOrientation = getOrientation(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+            if (not flipped_coord) {
+                neededOrientation = 3 - neededOrientation;
+            }
             if (neededOrientation != currentOrientation) {
                 steps.push_back({points[i-1].x, points[i-1].y, neededOrientation, currentTime});
                 currentOrientation = neededOrientation;
@@ -50,13 +69,27 @@ vector<Point> parseLine(const string& line) {
     vector<Point> points;
     stringstream ss(line);
     char ignore;
+    bool first_loc = true;
+    int prev_x = 0, prev_y = 0;
     int x, y;
     double time = 1.0;
 
     ss.ignore(100, ':');
 
     while (ss >> ignore >> x >> ignore >> y >> ignore) {
+        if (first_loc) {
+            prev_x = x;
+            prev_y = y;
+            first_loc = false;
+        }
+        if (std::abs(prev_x - x) + std::abs(prev_y - y) >= 2) {
+            raiseError("Invalid Plan");
+            // std::cerr << "Invalid Plan, move from " << prev_x << "," << prev_y << ", to: " <<
+            // x << "," << y << std::endl;
+        }
         points.push_back({x, y, time++});
+        prev_x = x;
+        prev_y = y;
         ss >> ignore >> ignore;
     }
 
@@ -67,12 +100,24 @@ vector<Point> parseLineContinuous(const string& line) {
     vector<Point> points;
     stringstream ss(line);
     char ignore;
+    bool first_loc = true;
+    int prev_x = 0, prev_y = 0;
     int x, y;
     double t;
 
     ss.ignore(100, ':');
     while (ss >> ignore >> x >> ignore >> y >> ignore >> t >> ignore) {
+        if (first_loc) {
+            prev_x = x;
+            prev_y = y;
+            first_loc = false;
+        }
+        if (std::abs(prev_x - x) + std::abs(prev_y - y) >= 2) {
+            raiseError("Invalid Plan");
+        }
         points.push_back({x, y, t});
+        prev_x = x;
+        prev_y = y;
         ss >> ignore >> ignore;
     }
 
@@ -174,6 +219,13 @@ void showActionsPlan(std::vector<std::vector<Action>>& plans) {
     }
 }
 
+void raiseError(const string &msg) {
+    std::cout << "Invalid MAPF plan: " << msg << std::endl;
+    // std::cerr << msg << std::endl;
+    exit(-1);
+}
+
+
 bool parseEntirePlan(const std::string& input_file,
                      std::vector<std::vector<Action>>& plans,
                      double& raw_cost,
@@ -194,9 +246,10 @@ bool parseEntirePlan(const std::string& input_file,
         while (getline(inFile, line)) {
             std::vector<Step> tmp_plan;
             if (!line.empty()) {
-                vector<Point> points = parseLine(line);
+                std::vector<Point> points = parseLine(line);
                 raw_cost += static_cast<double> (points.size());
-                processAgentActions(points, tmp_plan, agentId++);
+                processAgentActions(points, tmp_plan, flipped_coord);
+                agentId++;
             }
             raw_plan.push_back(tmp_plan);
         }
@@ -213,14 +266,15 @@ bool parseEntirePlan(const std::string& input_file,
             if (!line.empty()) {
                 vector<Point> points = parseLineContinuous(line);
                 raw_cost += static_cast<double> (points.size());
-                processAgentActionsContinuous(points, tmp_plan, agentId++);
+                processAgentActionsContinuous(points, tmp_plan, flipped_coord);
+                agentId++;
             }
             raw_plan.push_back(tmp_plan);
         }
         inFile.close();
-        showStepPoints(raw_plan);
+        // showStepPoints(raw_plan);
         plans = processActions(raw_plan, flipped_coord);
-        showActionsPlan(plans);
+        // showActionsPlan(plans);
         return true;
     } else {
         std::cerr << "Unsupported path format!" << std::endl;

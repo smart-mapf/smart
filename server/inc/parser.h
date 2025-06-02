@@ -40,4 +40,5 @@ void processAgentActions(const vector<Point>& points, vector<Step>& steps, int a
 vector<Point> parseLine(const string& line);
 std::vector<std::vector<Action>> processActions(const std::vector<std::vector<Step>>& raw_steps, bool flipped_coord);
 bool parseEntirePlan(const std::string& input_file, std::vector<std::vector<Action>>& plans,
-                     double& raw_cost, bool flipped_coord = true, PlanType file_type = PlanType::DISCRETE);
+                     double& raw_cost, bool flipped_coord = true, PlanType file_type = PlanType::CONTINUOUS);
+void raiseError(const string &msg);

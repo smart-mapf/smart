@@ -73,10 +73,16 @@ make
 
 #### Running with visualization
 ```
-python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=20 --path_filename=example_paths.txt
+python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_xy.txt --flip_coord=0
+```
+```
+python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_yx.txt --flip_coord=1
 ```
 
 #### Running in headless mode
 ```
-python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=20 --path_filename=example_paths.txt --headless=True
+python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_xy.txt --flip_coord=0 --headless=True
+```
+```
+python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_yx.txt --flip_coord=1 --headless=True
 ```

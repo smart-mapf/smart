@@ -23,7 +23,8 @@ std::mutex globalMutex;
 
 class ADG_Server{
 public:
-    ADG_Server(std::string& path_filename, std::string& target_output_filename, std::string map_name, std::string scen_name, std::string method_name);
+    ADG_Server(std::string& path_filename, std::string& target_output_filename,
+        std::string map_name, std::string scen_name, std::string method_name, bool flip_coord);
     void saveStats();
     
     std::shared_ptr<ADG> adg;

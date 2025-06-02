@@ -80,6 +80,7 @@ public:
     virtual void ControlStep();
     virtual void Reset() {}
     virtual void Destroy() {}
+    int getRobotID() const { return agent_idx_in_server; }
 
 private:
     CCI_DifferentialSteeringActuator *m_pcWheels;
@@ -137,12 +138,14 @@ private:
     Real ki_move_ = 0.0;
     Real kd_move_ = 0.0;
     std::string debug_id = "-1";
+    int agent_idx_in_server = -1;
+
 
     int lineExistFlag = 0;
     bool terminateFlag = false;
 
-    std::ofstream outputFile;
-    std::string outputDir;
+    // std::ofstream outputFile;
+    // std::string outputDir;
 
     bool is_initialized = false;
 };

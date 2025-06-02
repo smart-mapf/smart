@@ -14,6 +14,7 @@ def parse_arguments():
     parser.add_argument("--path_filename", type=str, required=False, default="example_paths.txt", help="Name of the output path file")
     parser.add_argument("--stats_name", type=str, required=False, default="stats.csv", help="Name of the statistics file for simulator")
     parser.add_argument("--port_num", type=int, required=False, default=8182, help="Port number for sim and client")
+    parser.add_argument("--flip_coord", type=int, required=False, default=True, help="input format of the mapf planner, 0 if xy, 1 if yx")
 
     return parser.parse_args()
 
@@ -91,23 +92,12 @@ if __name__ == "__main__":
     ArgosConfig.create_Argos(map_data, config_filename, width, height, robot_init_pos, curr_num_agent, port_num, not args.headless)
     print("Argos config file created.")
 
-    # print("Running planner ...")
-    # executable_path = "planner/LNS/build/lns"
-    # run_args = []
-    # run_args += [executable_path]
-    # run_args += ["-m", map_file_path]
-    # run_args += ["-a", scen_file_path]
-    # run_args += ["--outputPaths=" + path_filename]
-    # run_args += ["-k", str(curr_num_agent)]
-    # run_args += ["-t", "300"]
-    # run_args += [f"--maxIterations=1000"]
-    # run_planner(run_args)
-    # print("Planner create path successful.")
-
     print("Running simulator ...")
     server_executable_path = "server/build/ADG_server"
     server_command = [server_executable_path, "-p", path_filename, "-n", str(port_num), "-o",
-                      sim_stats_filename, "-m", map_file_path, "-s", str(scen_file_path), f"--method_name=LNS2"]
+                      sim_stats_filename, "-m", map_file_path, "-s", str(scen_file_path), f"--method_name=LNS2", f"--flip_coord={args.flip_coord}"]
+    print(server_command)
     client_command = ["argos3", "-c", f"../{config_filename}"]
     print(client_command)
+    # exit(0)
     run_experiment((server_command, client_command))

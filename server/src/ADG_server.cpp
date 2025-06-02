@@ -7,14 +7,15 @@ ADG_Server::ADG_Server(std::string &path_filename,
     std::string& target_output_filename, 
     std::string map_name, 
     std::string scen_name,
-    std::string method_name):
+    std::string method_name,
+    bool flip_coord):
 path_filename_(path_filename), curr_map_name(map_name), curr_scen_name(scen_name), curr_method_name(method_name)
  {
     if (path_filename == "none") {
         std::cerr << "No path file provided, exiting ..." << std::endl;
         exit(-1);
     } else {
-        bool success = parseEntirePlan(path_filename, plans, raw_plan_cost);
+        bool success = parseEntirePlan(path_filename, plans, raw_plan_cost, flip_coord);
         if (not success){
             std::cerr << "Incorrect path, no ADG constructed! exiting ..." << std::endl;
             exit(-1);
@@ -178,6 +179,7 @@ int main(int argc, char **argv) {
             ("path_file,p", po::value<string>(), "input file for path")
 //            ("path_file,p", po::value<string>()->default_value("../data/maze-32-32-4_paths.txt"), "input file for path")
             ("port_number,n", po::value<int>()->default_value(8080), "rpc port number")
+            ("flip_coord", po::value<bool>()->default_value(true), "input format of the mapf planner, 0 if xy, 1 if yx")
             ("output_file,o", po::value<string>()->default_value("stats.csv"), "output statistic filename")
             ("map_file,m", po::value<string>()->default_value("empty-8-8"), "map filename")
             ("scen_file,s", po::value<string>()->default_value("empty-8-8-random-1"), "scen filename")
@@ -200,7 +202,7 @@ int main(int argc, char **argv) {
     // std::cout << "Solving for path name: " << filename << std::endl;
     std::string out_filename = vm["output_file"].as<string>();
     server_ptr = std::make_shared<ADG_Server>(filename, out_filename, vm["map_file"].as<string>(), 
-        vm["scen_file"].as<string>(), vm["method_name"].as<string>());
+        vm["scen_file"].as<string>(), vm["method_name"].as<string>(), vm["flip_coord"].as<bool>());
 
     int port_number = vm["port_number"].as<int>();
     try {

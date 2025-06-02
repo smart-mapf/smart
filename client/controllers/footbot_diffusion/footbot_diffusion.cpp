@@ -132,42 +132,43 @@ void CFootBotDiffusion::ControlStep() {
         is_initialized = true;
 
         std::vector<outputTuple> actions = client->call("init", robot_id).as<std::vector<outputTuple>>();
-        outputDir = client->call("get_config").as<std::string>();
-        outputDir = "client_output/"+outputDir+"/";
+        // outputDir = client->call("get_config").as<std::string>();
+        // agent_idx_in_server = client->call("get_robot_idx").as<int>();
+        // outputDir = "client_output/"+outputDir+"/";
         insertActions(actions);
 
-        std::filesystem::path dirPath(outputDir);
-        if (!std::filesystem::exists(dirPath)) {
-            std::filesystem::create_directories(dirPath);
-        }
+        // std::filesystem::path dirPath(outputDir);
+        // if (!std::filesystem::exists(dirPath)) {
+        //     std::filesystem::create_directories(dirPath);
+        // }
 
-        std::ifstream inputFile;
-        inputFile.open(outputDir+robot_id+".csv");
-        outputFile.open(outputDir+robot_id+".csv", std::ios::trunc);
-        std::string line;
-        bool lineExists = false;
-        while(std::getline(inputFile, line)){
-            if (line.find("Robot ID") != std::string::npos) {
-                lineExists = true;
-                break;
-            }
-        }
-        inputFile.close();
-        if (outputFile.is_open()) {
-            if (!lineExists) {
-                outputFile << std::setw(10) << "Robot ID"
-                        << std::setw(20) << "Current Position X"
-                        << std::setw(20) << "Current Position Y"
-                        << std::setw(20) << "Current Angle"
-                        << std::setw(20) << "Queue Length"
-                        << std::setw(20) << "Left Velocity"
-                        << std::setw(20) << "Right Velocity"
-                        << std::setw(20) << "Count" 
-                        << std::setw(20) << "Sim Time" << std::endl;
-            }
-        } else {
-            std::cerr << "Unable to open output, errono:" << strerror(errno) << std::endl;
-        }
+        // std::ifstream inputFile;
+        // inputFile.open(outputDir+robot_id+".csv");
+        // outputFile.open(outputDir+robot_id+".csv", std::ios::trunc);
+        // std::string line;
+        // bool lineExists = false;
+        // while(std::getline(inputFile, line)){
+        //     if (line.find("Robot ID") != std::string::npos) {
+        //         lineExists = true;
+        //         break;
+        //     }
+        // }
+        // inputFile.close();
+        // if (outputFile.is_open()) {
+        //     if (!lineExists) {
+        //         outputFile << std::setw(10) << "Robot ID"
+        //                 << std::setw(20) << "Current Position X"
+        //                 << std::setw(20) << "Current Position Y"
+        //                 << std::setw(20) << "Current Angle"
+        //                 << std::setw(20) << "Queue Length"
+        //                 << std::setw(20) << "Left Velocity"
+        //                 << std::setw(20) << "Right Velocity"
+        //                 << std::setw(20) << "Count"
+        //                 << std::setw(20) << "Sim Time" << std::endl;
+        //     }
+        // } else {
+        //     std::cerr << "Unable to open output, errono:" << strerror(errno) << std::endl;
+        // }
         return;
     }
     Action a;
@@ -254,39 +255,39 @@ void CFootBotDiffusion::ControlStep() {
         right_v = 0.0f;
     }
 
-    if (count % 200 == 0 && !terminateFlag){
-        if (outputFile.is_open()) {
-            outputFile << std::setw(10) << robot_id
-            << std::setw(20) << ChangeCoordinateFromArgosToMap(currPos.GetY())
-            << std::setw(20)<<ChangeCoordinateFromArgosToMap(currPos.GetX())
-            << std::setw(20)<< currAngle
-            << std::setw(20)<< q.size()
-            << std::setw(20)<< left_v
-            << std::setw(20)<< right_v
-            << std::setw(20) << count
-            << std::setw(20) << count/m_tickPerSec << std::endl;
-        } else {
-            std::cout << "Unable to open output file" << std::endl;
-        }
-    }
+    // if (count % 200 == 0 && !terminateFlag){
+    //     if (outputFile.is_open()) {
+    //         outputFile << std::setw(10) << robot_id
+    //         << std::setw(20) << ChangeCoordinateFromArgosToMap(currPos.GetY())
+    //         << std::setw(20)<<ChangeCoordinateFromArgosToMap(currPos.GetX())
+    //         << std::setw(20)<< currAngle
+    //         << std::setw(20)<< q.size()
+    //         << std::setw(20)<< left_v
+    //         << std::setw(20)<< right_v
+    //         << std::setw(20) << count
+    //         << std::setw(20) << count/m_tickPerSec << std::endl;
+    //     } else {
+    //         std::cout << "Unable to open output file" << std::endl;
+    //     }
+    // }
 
     if (receive_msg == "end" || receive_msg == "exit") {
         client->call("update_finish_agent", robot_id, count);
-        if (outputFile.is_open()) {
-            outputFile << std::setw(10) << robot_id 
-            << std::setw(20) << ChangeCoordinateFromArgosToMap(currPos.GetY()) 
-            << std::setw(20)<<ChangeCoordinateFromArgosToMap(currPos.GetX()) 
-            << std::setw(20)<< currAngle 
-            << std::setw(20)<< q.size() 
-            << std::setw(20)<< left_v 
-            << std::setw(20)<< right_v 
-            << std::setw(20) << count
-            << std::setw(20) << count/m_tickPerSec << std::endl;
-            outputFile.close();
-            terminateFlag = true;
-        } else {
-            std::cout << "Unable to open output file" << std::endl;
-        }
+        // if (outputFile.is_open()) {
+        //     outputFile << std::setw(10) << robot_id
+        //     << std::setw(20) << ChangeCoordinateFromArgosToMap(currPos.GetY())
+        //     << std::setw(20)<<ChangeCoordinateFromArgosToMap(currPos.GetX())
+        //     << std::setw(20)<< currAngle
+        //     << std::setw(20)<< q.size()
+        //     << std::setw(20)<< left_v
+        //     << std::setw(20)<< right_v
+        //     << std::setw(20) << count
+        //     << std::setw(20) << count/m_tickPerSec << std::endl;
+        //     outputFile.close();
+        //     terminateFlag = true;
+        // } else {
+        //     std::cout << "Unable to open output file" << std::endl;
+        // }
     }
     if (receive_msg == "exit") {
         client->async_call("closeServer");
@@ -345,7 +346,7 @@ double CFootBotDiffusion::getReferenceSpeed(double dist)
     } else if (dist > 0) {
         dist_flag = 1;
     }
-    return dist_flag * std::min(sqrt(2*m_linearAcceleration*std::abs(dist)*10), m_fWheelVelocity);
+    return dist_flag * std::min(sqrt(2*m_linearAcceleration*std::abs(dist)/dt), m_fWheelVelocity);
 }
 
 std::pair<Real, Real> CFootBotDiffusion::Move(CVector3& targetPos, CVector3& currPos, Real currAngle, Real tolerance = 1.0f)
