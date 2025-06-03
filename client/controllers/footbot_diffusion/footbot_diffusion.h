@@ -29,6 +29,7 @@ using namespace argos;
 using outputTuple = std::tuple<std::string, int, double, std::string, std::pair<double, double>, std::pair<double, double>>;
 
 #define EPS 0.01f
+#define MOVE_DIS 0.5f
 
 struct Action {
     Real x;

@@ -132,43 +132,8 @@ void CFootBotDiffusion::ControlStep() {
         is_initialized = true;
 
         std::vector<outputTuple> actions = client->call("init", robot_id).as<std::vector<outputTuple>>();
-        // outputDir = client->call("get_config").as<std::string>();
         agent_idx_in_server = client->call("get_robot_idx", robot_id).as<int>();
-        // outputDir = "client_output/"+outputDir+"/";
         insertActions(actions);
-
-        // std::filesystem::path dirPath(outputDir);
-        // if (!std::filesystem::exists(dirPath)) {
-        //     std::filesystem::create_directories(dirPath);
-        // }
-
-        // std::ifstream inputFile;
-        // inputFile.open(outputDir+robot_id+".csv");
-        // outputFile.open(outputDir+robot_id+".csv", std::ios::trunc);
-        // std::string line;
-        // bool lineExists = false;
-        // while(std::getline(inputFile, line)){
-        //     if (line.find("Robot ID") != std::string::npos) {
-        //         lineExists = true;
-        //         break;
-        //     }
-        // }
-        // inputFile.close();
-        // if (outputFile.is_open()) {
-        //     if (!lineExists) {
-        //         outputFile << std::setw(10) << "Robot ID"
-        //                 << std::setw(20) << "Current Position X"
-        //                 << std::setw(20) << "Current Position Y"
-        //                 << std::setw(20) << "Current Angle"
-        //                 << std::setw(20) << "Queue Length"
-        //                 << std::setw(20) << "Left Velocity"
-        //                 << std::setw(20) << "Right Velocity"
-        //                 << std::setw(20) << "Count"
-        //                 << std::setw(20) << "Sim Time" << std::endl;
-        //     }
-        // } else {
-        //     std::cerr << "Unable to open output, errono:" << strerror(errno) << std::endl;
-        // }
         return;
     }
     Action a;
@@ -204,7 +169,7 @@ void CFootBotDiffusion::ControlStep() {
             }
             continue;
         }
-        else if (a.type == Action::MOVE && (abs((currPos - targetPos).Length() + 0.5*(-static_cast<double>(a.nodeIDS.size()) + 1))) < EPS) {
+        else if (a.type == Action::MOVE && ((currPos - targetPos).Length() + MOVE_DIS*(-static_cast<double>(a.nodeIDS.size()) + 1)) < EPS) {
             if (robot_id == debug_id) {
                 std::cout << "Action: " << a.type << ", Target Position: (" << a.x << ", " << a.y << ")" <<
                 ", Current Position: (" << currPos.GetX() << ", " << currPos.GetY() << "). Previous speed is: "

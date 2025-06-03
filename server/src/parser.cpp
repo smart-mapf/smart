@@ -55,6 +55,11 @@ void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& st
             if (not flipped_coord) {
                 neededOrientation = 3 - neededOrientation;
             }
+
+            if (neededOrientation == -1 or neededOrientation == 4) {
+                neededOrientation = currentOrientation;
+            }
+
             if (neededOrientation != currentOrientation) {
                 steps.push_back({points[i-1].x, points[i-1].y, neededOrientation, currentTime});
                 currentOrientation = neededOrientation;
@@ -208,14 +213,16 @@ void showStepPoints(std::vector<std::vector<Step>>& raw_plan){
 
 void showActionsPlan(std::vector<std::vector<Action>>& plans) {
     for (size_t i = 0; i < plans.size(); i++) {
-        printf("Path of agent: %lu\n", i);
-        for (auto &action: plans[i]) {
-            std::cout << "        {" << action.robot_id << ", " << action.time << ", "
-                      << std::fixed << std::setprecision(1) << action.orientation << ", '"
-                      << action.type << "', {" << action.start.first << ", " << action.start.second << "}, {"
-                      << action.goal.first << ", " << action.goal.second << "}, " << action.nodeID << "}," << std::endl;
+        if (i == 34) {
+          printf("Path of agent: %lu\n", i);
+          for (auto &action: plans[i]) {
+              std::cout << "        {" << action.robot_id << ", " << action.time << ", "
+                        << std::fixed << std::setprecision(1) << action.orientation << ", '"
+                        << action.type << "', {" << action.start.first << ", " << action.start.second << "}, {"
+                        << action.goal.first << ", " << action.goal.second << "}, " << action.nodeID << "}," << std::endl;
+          }
+          printf("\n");
         }
-        printf("\n");
     }
 }
 
@@ -270,7 +277,7 @@ bool parseEntirePlan(const std::string& input_file,
             std::vector<Step> tmp_plan;
             if (!line.empty()) {
                 vector<Point> points = parseLineContinuous(line);
-                raw_cost += static_cast<double> (points.size());
+                raw_cost += static_cast<double> (points.end()->time);
                 processAgentActionsContinuous(points, tmp_plan, flipped_coord);
                 agentId++;
             }
@@ -279,7 +286,7 @@ bool parseEntirePlan(const std::string& input_file,
         inFile.close();
         // showStepPoints(raw_plan);
         plans = processActions(raw_plan, flipped_coord);
-        // showActionsPlan(plans);
+        showActionsPlan(plans);
         return true;
     } else {
         std::cerr << "Unsupported path format!" << std::endl;
