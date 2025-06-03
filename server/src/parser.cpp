@@ -55,6 +55,11 @@ void processAgentActionsContinuous(const vector<Point>& points, vector<Step>& st
             if (not flipped_coord) {
                 neededOrientation = 3 - neededOrientation;
             }
+
+            if (neededOrientation == -1 or neededOrientation == 4) {
+                neededOrientation = currentOrientation;
+            }
+
             if (neededOrientation != currentOrientation) {
                 steps.push_back({points[i-1].x, points[i-1].y, neededOrientation, currentTime});
                 currentOrientation = neededOrientation;
@@ -265,7 +270,7 @@ bool parseEntirePlan(const std::string& input_file,
             std::vector<Step> tmp_plan;
             if (!line.empty()) {
                 vector<Point> points = parseLineContinuous(line);
-                raw_cost += static_cast<double> (points.size());
+                raw_cost += static_cast<double> (points.end()->time);
                 processAgentActionsContinuous(points, tmp_plan, flipped_coord);
                 agentId++;
             }

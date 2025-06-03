@@ -204,7 +204,7 @@ void CFootBotDiffusion::ControlStep() {
             }
             continue;
         }
-        else if (a.type == Action::MOVE && (abs((currPos - targetPos).Length() + 0.5*(-static_cast<double>(a.nodeIDS.size()) + 1))) < EPS) {
+        else if (a.type == Action::MOVE && ((currPos - targetPos).Length() + MOVE_DIS*(-static_cast<double>(a.nodeIDS.size()) + 1)) < EPS) {
             if (robot_id == debug_id) {
                 std::cout << "Action: " << a.type << ", Target Position: (" << a.x << ", " << a.y << ")" <<
                 ", Current Position: (" << currPos.GetX() << ", " << currPos.GetY() << "). Previous speed is: "
