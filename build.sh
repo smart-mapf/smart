@@ -32,3 +32,13 @@ mkdir build
 cd build
 cmake ..
 make
+
+cd "$ROOT_DIR"
+
+# ─── Plugins ──────────────────────────────────────────────────────────────────
+
+cd plugins/visualizers/external_visualizer
+mkdir build
+cd build
+cmake ..
+make
