@@ -1,12 +1,14 @@
 # Scalable Multi-Agent Realistic Testbed (SMART)
 
+SMART is an efficient soft-tool that bridge the gap between Multi-Agent Path Finding (MAPF) and real-world application. More details can be found in our paper:
+Advancing MAPF towards the Real World: A Scalable Multi-Agent Realistic Testbed (SMART) [1].
 
 
-### Requirements
+## Requirements
 
-#### Ubuntu 22.04
+### Ubuntu 22.04
 
-#### RPC
+### RPC
 This repo requires [RPC](https://github.com/rpclib/rpclib) for communication
 between server and clients.
 It also requires [Planner](https://github.com/lunjohnzhang/MAPF-LNS2) for planning.
@@ -24,11 +26,11 @@ make
 sudo make install
 ```
 
-#### Argos
+### Argos
 Install Argos 3, please refer to this [Link](https://www.argos-sim.info/core.php) for instruction.
 
 
-### Compile instructions
+## Compile instructions
 ### Client Folder (Simulator)
 - To build the project, first navigate to the client folder Then: 
 ```
@@ -69,9 +71,9 @@ cmake ..
 make
 ```
 
-### Running guide for entire pipeline
+## Running guide for entire pipeline
 
-#### Running with visualization
+### Running with visualization
 ```
 python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_xy.txt --flip_coord=0
 ```
@@ -79,10 +81,14 @@ python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-ran
 python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_yx.txt --flip_coord=1
 ```
 
-#### Running in headless mode
+### Running in headless mode
 ```
 python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_xy.txt --flip_coord=0 --headless=True
 ```
 ```
 python run_sim.py --map_name=random-32-32-20.map --scen_name=random-32-32-20-random-1.scen --num_agents=50 --path_filename=example_paths_yx.txt --flip_coord=1 --headless=True
 ```
+
+
+## Reference
+[1] Yan, Jingtian, Zhifei Li, William Kang, Kevin Zheng, Yulun Zhang, Zhe Chen, Yue Zhang, Daniel Harabor, Stephen Smith, and Jiaoyang Li. "Advancing MAPF towards the Real World: A Scalable Multi-Agent Realistic Testbed (SMART)." arXiv preprint arXiv:2503.04798 (2025).
