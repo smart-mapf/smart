@@ -1,3 +1,9 @@
+![Banner](https://github.com/user-attachments/assets/c43d8b2d-16e2-45c4-999e-b25d45b9cb1b)
+
+[Open the app](https://smart-mapf.github.io/demo/)
+
+---
+
 # Scalable Multi-Agent Realistic Testbed (SMART)
 
 SMART is an efficient soft-tool that bridge the gap between Multi-Agent Path Finding (MAPF) and real-world application. More details can be found in our paper:
