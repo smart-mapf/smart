@@ -104,7 +104,7 @@ def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr
     positioning = ET.SubElement(sensors, "positioning", implementation="default")
 
     # Parameters
-    params = ET.SubElement(footbot_controller, "params", alpha="7.5", omega="3.0", velocity=f"{kwargs.max_speed or 500}", acceleration=f"{kwargs.acceleration or 10}", portNumber=f"{port_num}", outputDir=f"metaData{port_num}/")
+    params = ET.SubElement(footbot_controller, "params", alpha="7.5", omega="3.0", velocity=f"{kwargs['max_speed'] or 500}", acceleration=f"{kwargs['acceleration'] or 10}", portNumber=f"{port_num}", outputDir=f"metaData{port_num}/")
 
     map_center_x = -height / 2+0.5
     map_center_y = -width / 2+0.5
