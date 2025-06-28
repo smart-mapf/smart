@@ -15,6 +15,7 @@
     "@types/tempy": "^0.3.0",
     "get-port-please": "^3.1.2",
     "js-yaml": "^4.1.0",
+    "jsx-xml": "^0.3.0",
     "lodash": "^4.17.21",
     "tempy": "^3.1.0"
   }

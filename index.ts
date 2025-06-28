@@ -25,6 +25,14 @@ type Options = {
    */
   agents: number;
   flipXY: boolean;
+  /**
+   * The maximum speed of the agents in the simulation.
+   */
+  maxSpeed?: number;
+  /**
+   * The acceleration of the agents in the simulation.
+   */
+  acceleration?: number;
 };
 
 export type Step = {
@@ -130,7 +138,15 @@ function isOutput(a: unknown): a is Output {
  * It creates temporary files for the map and paths, runs the simulation using a Python script,
  * and cleans up the temporary files after the simulation is complete.
  */
-export async function run({ map, paths, agents, scen, flipXY }: Options) {
+export async function run({
+  map,
+  paths,
+  agents,
+  scen,
+  flipXY,
+  acceleration,
+  maxSpeed,
+}: Options) {
   const tmp = {
     map: temporaryFile({ extension: "map" }),
     scen: temporaryFile({ extension: "scen" }),
@@ -151,6 +167,8 @@ export async function run({ map, paths, agents, scen, flipXY }: Options) {
       `--path_filename=${tmp.paths}`,
       `--port=${await getPort()}`,
       `--flip_coord=${flipXY ? "1" : "0"}`,
+      `--max_speed=${maxSpeed ?? 500}`,
+      `--acceleration=${acceleration ?? 10}`,
     ],
     {
       stderr: "pipe",

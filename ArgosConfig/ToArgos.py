@@ -3,22 +3,6 @@ from xml.dom import minidom
 import argparse
 import  os
 
-# def prettify(elem, level=0):
-#     """Return a pretty-printed XML string for the Element."""
-#     indent = "  "
-#     newline = "\n"
-#     if len(elem):
-#         if not elem.text or not elem.text.strip():
-#             elem.text = newline + indent * (level + 1)
-#         if not elem.tail or not elem.tail.strip():
-#             elem.tail = newline + indent * level
-#         for child in elem:
-#             prettify(child, level + 1)
-#         if not elem.tail or not elem.tail.strip():
-#             elem.tail = newline + indent * level
-#     else:
-#         if level and (not elem.tail or not elem.tail.strip()):
-#             elem.tail = newline + indent * level
 obstacles = ['@', 'T']
 
 def prettify(elem):
@@ -77,7 +61,7 @@ def create_xml(map_data, output_file_path, width, height, robot_init_pos):
     
     tree.write(output_file_path, encoding='utf-8', xml_declaration=True)
 
-def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr_num_agent, port_num, visualization=False):
+def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr_num_agent, port_num, visualization=False,**kwargs):
     # Create the root element
     argos_config = ET.Element("argos-configuration")
     # ET.SubElement(argos_config,'loop_functions',
@@ -120,7 +104,7 @@ def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr
     positioning = ET.SubElement(sensors, "positioning", implementation="default")
 
     # Parameters
-    params = ET.SubElement(footbot_controller, "params", alpha="7.5", omega="3.0", velocity="500", acceleration="10.0", portNumber=f"{port_num}", outputDir=f"metaData{port_num}/")
+    params = ET.SubElement(footbot_controller, "params", alpha="7.5", omega="3.0", velocity=f"{kwargs.max_speed or 500}", acceleration=f"{kwargs.acceleration or 10}", portNumber=f"{port_num}", outputDir=f"metaData{port_num}/")
 
     map_center_x = -height / 2+0.5
     map_center_y = -width / 2+0.5

@@ -15,7 +15,8 @@ def parse_arguments():
     parser.add_argument("--stats_name", type=str, required=False, default="stats.csv", help="Name of the statistics file for simulator")
     parser.add_argument("--port_num", type=int, required=False, default=8182, help="Port number for sim and client")
     parser.add_argument("--flip_coord", type=int, required=False, default=True, help="input format of the mapf planner, 0 if xy, 1 if yx")
-
+    parser.add_argument('--max_speed', type=int, default=500, help='Maximum speed of the agents in the simulation')
+    parser.add_argument('--acceleration', type=int, default=10, help='Acceleration of the agents in the simulation')
     return parser.parse_args()
 
 
@@ -89,7 +90,17 @@ if __name__ == "__main__":
     if scen_num_agent < curr_num_agent:
         print("Number of agents exceed maximum number. exiting ...")
         exit(-1)
-    ArgosConfig.create_Argos(map_data, config_filename, width, height, robot_init_pos, curr_num_agent, port_num, not args.headless)
+    ArgosConfig.create_Argos(
+        map_data, 
+        config_filename, 
+        width, 
+        height, 
+        robot_init_pos, 
+        curr_num_agent, 
+        port_num, 
+        not args.headless,
+        max_speed=args.max_speed,
+        acceleration=args.acceleration)
     print("Argos config file created.")
 
     # print("Running planner ...")
