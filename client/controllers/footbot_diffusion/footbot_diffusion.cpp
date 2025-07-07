@@ -195,6 +195,9 @@ void CFootBotDiffusion::ControlStep() {
         a = q.front();
         CVector3 currPos = m_pcPosSens->GetReading().Position;
         CVector3 targetPos = CVector3(a.x, a.y, 0.0f);
+        // std::cout << "Current Position: (" << currPos.GetX() << ", " << currPos.GetY() << "), Target Position: (" 
+        //           << targetPos.GetX() << ", " << targetPos.GetY() << "), Current Angle: " << currAngle 
+        //           << ", Action Type: " << a.type << ", Previous Velocity: " << prevVelocity_ << ", dt*m_fWheelVelocity: " << dt*m_fWheelVelocity << std::endl;
 
         if (a.type == Action::MOVE && ((currPos - targetPos).Length() < EPS) and (abs(prevVelocity_)) <= dt*m_fWheelVelocity) {
             a.type = Action::STOP;
@@ -229,7 +232,7 @@ void CFootBotDiffusion::ControlStep() {
                 }
             }
         }
-        else if (a.type == Action::TURN && angleDifference(currAngle, a.angle) < 0.5f) {
+        else if (a.type == Action::TURN && angleDifference(currAngle, a.angle) < 0.1f) {
             a.type = Action::STOP;
             receive_msg = client->call("receive_update", robot_id, a.nodeIDS.front()).as<std::string>();
             q.pop_front();
@@ -291,6 +294,7 @@ void CFootBotDiffusion::ControlStep() {
     }
     if (receive_msg == "exit") {
         client->async_call("closeServer");
+        sleep(1);
         exit(0);
     }
 }
