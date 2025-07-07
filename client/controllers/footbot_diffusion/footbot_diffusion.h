@@ -105,7 +105,6 @@ private:
     void MoveForward(Real x, Real y, Real tolerance);
     std::pair<Real, Real> inline pidAngular(Real error);
     std::pair<Real, Real> Turn(Real targetAngle, Real currAngle, Real tolerance);
-    void TurnLeft(Real angle, Real currAngle, Real tolerance);
     void CalculateVelocity(Real x, Real y);
     Real ChangeCoordinateFromMapToArgos(Real x);
     Real ChangeCoordinateFromArgosToMap(Real x);
