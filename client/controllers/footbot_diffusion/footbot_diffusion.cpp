@@ -194,7 +194,7 @@ void CFootBotDiffusion::ControlStep() {
                 }
             }
         }
-        else if (a.type == Action::TURN && angleDifference(currAngle, a.angle) < 0.5f) {
+        else if (a.type == Action::TURN && angleDifference(currAngle, a.angle) < 0.1f) {
             a.type = Action::STOP;
             receive_msg = client->call("receive_update", robot_id, a.nodeIDS.front()).as<std::string>();
             q.pop_front();
@@ -256,6 +256,7 @@ void CFootBotDiffusion::ControlStep() {
     }
     if (receive_msg == "exit") {
         client->async_call("closeServer");
+        sleep(1);
         exit(0);
     }
 }
