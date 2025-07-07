@@ -66,7 +66,7 @@ void CFootBotDiffusion::Init(TConfigurationNode &t_node) {
     GetNodeAttributeOrDefault(t_node, "acceleration", m_linearAcceleration, m_linearAcceleration);
     GetNodeAttributeOrDefault(t_node, "portNumber", port_number, 8080);
     GetNodeAttributeOrDefault(t_node, "outputDir", m_outputDir,std::string("metaData/"));
-    m_linearVelocity = 1.22 * m_angularVelocity;
+    m_rotateWheelVelocity = 1.22 * m_angularVelocity;
     m_currVelocity = 0.0;
     CVector3 currPos = m_pcPosSens->GetReading().Position;
     robot_id = std::to_string((int) ChangeCoordinateFromArgosToMap(currPos.GetY())) + "_" +
@@ -303,7 +303,7 @@ std::pair<Real, Real> CFootBotDiffusion::pidAngular(Real error)
     prev_turn_error = error;
 
     Real output = kp_turn_ * error + ki_turn_ * integral_turn_error + kd_turn_ * derivative;
-    output = std::clamp(output, -m_linearVelocity, m_linearVelocity);
+    output = std::clamp(output, -m_rotateWheelVelocity, m_rotateWheelVelocity);
     Real left_v = -output, right_v = output;
     return std::make_pair(left_v, right_v);
 }
@@ -379,10 +379,17 @@ std::pair<Real, Real> CFootBotDiffusion::Move(CVector3& targetPos, CVector3& cur
     Real left_v_total = linearVelocity;
     Real right_v_total = linearVelocity;
 
-    left_v_total = std::clamp(left_v_total, -m_fWheelVelocity, m_fWheelVelocity);
-    right_v_total = std::clamp(right_v_total, -m_fWheelVelocity, m_fWheelVelocity);
+    // Add angular velocity components
     left_v_total += (1/m_fWheelVelocity)*std::abs(linearVelocity)*angularVelocity.first;
     right_v_total += (1/m_fWheelVelocity)*std::abs(linearVelocity)*angularVelocity.second;
+    
+    // Check if either wheel exceeds the limit and scale down proportionally to preserve turning
+    Real max_wheel_speed = std::max(std::abs(left_v_total), std::abs(right_v_total));
+    if (max_wheel_speed > m_fWheelVelocity) {
+        Real scale_factor = m_fWheelVelocity / max_wheel_speed;
+        left_v_total *= scale_factor;
+        right_v_total *= scale_factor;
+    }
 
     prevLeftVelocity_ = left_v_total;
     prevRightVelocity_ = right_v_total;
@@ -391,29 +398,6 @@ std::pair<Real, Real> CFootBotDiffusion::Move(CVector3& targetPos, CVector3& cur
     m_pcWheels->SetLinearVelocity(left_v_total, right_v_total);
 
     return std::make_pair(left_v_total, right_v_total);
-}
-
-void CFootBotDiffusion::TurnLeft(Real targetAngle, Real currAngle, Real tolerance = 1.0f) {
-    Real angleDifference = targetAngle - currAngle;
-    Real left_v, right_v;
-    if (angleDifference > 0.0 && angleDifference < 180.0) {
-        if (abs(angleDifference) <= 10.0) {
-            left_v = -m_linearVelocity / (11.0 - abs(angleDifference));
-            right_v = +m_linearVelocity / (11.0 - abs(angleDifference));
-        } else {
-            left_v = -m_linearVelocity;
-            right_v = m_linearVelocity;
-        }
-    } else {
-        if (abs(angleDifference) <= 10.0) {
-            left_v = m_linearVelocity / (11.0 - abs(angleDifference));
-            right_v = -m_linearVelocity / (11.0 - abs(angleDifference));
-        } else {
-            left_v = m_linearVelocity;
-            right_v = -m_linearVelocity;
-        }
-    }
-    m_pcWheels->SetLinearVelocity(left_v, right_v);
 }
 
 Real CFootBotDiffusion::ChangeCoordinateFromMapToArgos(Real x) {
