@@ -33,6 +33,14 @@ type Options = {
    * The acceleration of the agents in the simulation.
    */
   acceleration?: number;
+  /**
+   * The maximum angular speed of the agents in the simulation.
+   */
+  angularMaxSpeed?: number;
+  /**
+   * The angular acceleration of the agents in the simulation.
+   */
+  angularAcceleration?: number;
 };
 
 export type Step = {

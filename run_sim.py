@@ -17,6 +17,8 @@ def parse_arguments():
     parser.add_argument("--flip_coord", type=int, required=False, default=True, help="input format of the mapf planner, 0 if xy, 1 if yx")
     parser.add_argument('--max_speed', type=int, default=500, help='Maximum speed of the agents in the simulation')
     parser.add_argument('--acceleration', type=int, default=10, help='Acceleration of the agents in the simulation')
+    parser.add_argument('--angular_max_speed', type=float, default=7.5, help='Maximum angular speed of the agents in the simulation')
+    parser.add_argument('--angular_acceleration', type=float, default=3.0, help='Angular acceleration of the agents in the simulation')
     return parser.parse_args()
 
 
@@ -100,7 +102,10 @@ if __name__ == "__main__":
         port_num, 
         not args.headless,
         max_speed=args.max_speed,
-        acceleration=args.acceleration)
+        acceleration=args.acceleration, 
+        angular_max_speed=args.angular_max_speed,
+        angular_acceleration=args.angular_acceleration
+    )
     print("Argos config file created.")
 
     # print("Running planner ...")
