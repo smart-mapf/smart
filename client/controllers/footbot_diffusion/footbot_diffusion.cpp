@@ -66,7 +66,9 @@ void CFootBotDiffusion::Init(TConfigurationNode &t_node) {
     GetNodeAttributeOrDefault(t_node, "acceleration", m_linearAcceleration, m_linearAcceleration);
     GetNodeAttributeOrDefault(t_node, "portNumber", port_number, 8080);
     GetNodeAttributeOrDefault(t_node, "outputDir", m_outputDir,std::string("metaData/"));
-    m_linearVelocity = 1.22 * m_angularVelocity;
+    m_rotateWheelVelocity = 1.22 * m_angularVelocity /100.0; // Convert from degree/s to cm/s
+    m_linearAcceleration /= 100.0; // Convert from cm/s^2 to m/s^2
+    m_fWheelVelocity /= 100.0; // Convert from cm/s to m/s
     m_currVelocity = 0.0;
     CVector3 currPos = m_pcPosSens->GetReading().Position;
     robot_id = std::to_string((int) ChangeCoordinateFromArgosToMap(currPos.GetY())) + "_" +
@@ -220,39 +222,8 @@ void CFootBotDiffusion::ControlStep() {
         right_v = 0.0f;
     }
 
-    // if (count % 200 == 0 && !terminateFlag){
-    //     if (outputFile.is_open()) {
-    //         outputFile << std::setw(10) << robot_id
-    //         << std::setw(20) << ChangeCoordinateFromArgosToMap(currPos.GetY())
-    //         << std::setw(20)<<ChangeCoordinateFromArgosToMap(currPos.GetX())
-    //         << std::setw(20)<< currAngle
-    //         << std::setw(20)<< q.size()
-    //         << std::setw(20)<< left_v
-    //         << std::setw(20)<< right_v
-    //         << std::setw(20) << count
-    //         << std::setw(20) << count/m_tickPerSec << std::endl;
-    //     } else {
-    //         std::cout << "Unable to open output file" << std::endl;
-    //     }
-    // }
-
     if (receive_msg == "end" || receive_msg == "exit") {
         client->call("update_finish_agent", robot_id, count);
-        // if (outputFile.is_open()) {
-        //     outputFile << std::setw(10) << robot_id
-        //     << std::setw(20) << ChangeCoordinateFromArgosToMap(currPos.GetY())
-        //     << std::setw(20)<<ChangeCoordinateFromArgosToMap(currPos.GetX())
-        //     << std::setw(20)<< currAngle
-        //     << std::setw(20)<< q.size()
-        //     << std::setw(20)<< left_v
-        //     << std::setw(20)<< right_v
-        //     << std::setw(20) << count
-        //     << std::setw(20) << count/m_tickPerSec << std::endl;
-        //     outputFile.close();
-        //     terminateFlag = true;
-        // } else {
-        //     std::cout << "Unable to open output file" << std::endl;
-        // }
     }
     if (receive_msg == "exit") {
         client->async_call("closeServer");
@@ -269,7 +240,7 @@ std::pair<Real, Real> CFootBotDiffusion::pidAngular(Real error)
     prev_turn_error = error;
 
     Real output = kp_turn_ * error + ki_turn_ * integral_turn_error + kd_turn_ * derivative;
-    output = std::clamp(output, -m_linearVelocity, m_linearVelocity);
+    output = std::clamp(output, -m_rotateWheelVelocity, m_rotateWheelVelocity);
     Real left_v = -output, right_v = output;
     return std::make_pair(left_v, right_v);
 }
@@ -290,7 +261,7 @@ std::pair<Real, Real> CFootBotDiffusion::Turn(Real targetAngle, Real currAngle, 
     Real left_v = turn_v.first;
     Real right_v = turn_v.second; 
 
-    m_pcWheels->SetLinearVelocity(left_v, right_v);
+    m_pcWheels->SetLinearVelocity(left_v*100.0, right_v*100.0); // Convert to cm/s
     return std::make_pair(left_v, right_v);
 }
 
@@ -312,7 +283,7 @@ double CFootBotDiffusion::getReferenceSpeed(double dist)
     } else if (dist > 0) {
         dist_flag = 1;
     }
-    return dist_flag * std::min(sqrt(2*m_linearAcceleration*std::abs(dist)/dt), m_fWheelVelocity);
+    return dist_flag * std::min(sqrt(2*(m_linearAcceleration*0.9)*std::abs(dist)), m_fWheelVelocity);
 }
 
 std::pair<Real, Real> CFootBotDiffusion::Move(CVector3& targetPos, CVector3& currPos, Real currAngle, Real tolerance = 1.0f)
@@ -361,7 +332,7 @@ std::pair<Real, Real> CFootBotDiffusion::Move(CVector3& targetPos, CVector3& cur
     prevRightVelocity_ = right_v_total;
     prevVelocity_ = linearVelocity;
 
-    m_pcWheels->SetLinearVelocity(left_v_total, right_v_total);
+    m_pcWheels->SetLinearVelocity(left_v_total*100.0, right_v_total*100.0); // Convert to cm/s
 
     return std::make_pair(left_v_total, right_v_total);
 }
