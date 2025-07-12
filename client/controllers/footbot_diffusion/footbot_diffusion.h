@@ -125,9 +125,9 @@ private:
     Real dt = 0.1;
     Real prev_turn_error=0.0;
     Real integral_turn_error=0.0;
-    Real kp_turn_ = 0.8;
+    Real kp_turn_ = 0.008;
     Real ki_turn_ = 0.0;
-    Real kd_turn_ = 0.1;
+    Real kd_turn_ = 0.001;
 
     Real prevLeftVelocity_ = 0.0;
     Real prevRightVelocity_ = 0.0;
@@ -136,7 +136,7 @@ private:
     Real integral_move_error=0.0;
     Real kp_move_ = 0.6;
     Real ki_move_ = 0.0;
-    Real kd_move_ = 0.0;
+    Real kd_move_ = 0.1;
     std::string debug_id = "-1";
     int agent_idx_in_server = -1;
 
