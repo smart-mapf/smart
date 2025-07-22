@@ -154,6 +154,7 @@ export async function run({
   flipXY,
   acceleration,
   maxSpeed,
+  angularMaxSpeed,
 }: Options) {
   const tmp = {
     map: temporaryFile({ extension: "map" }),
@@ -177,6 +178,7 @@ export async function run({
       `--flip_coord=${flipXY ? "1" : "0"}`,
       `--max_speed=${maxSpeed ?? 500}`,
       `--acceleration=${acceleration ?? 10}`,
+      `--angular_max_speed=${angularMaxSpeed ?? 30}`,
     ],
     {
       stderr: "pipe",
