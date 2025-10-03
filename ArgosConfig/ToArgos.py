@@ -104,10 +104,12 @@ def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr
     controllers = ET.SubElement(argos_config, "controllers")
 
     # Footbot controller
-    footbot_controller = ET.SubElement(controllers, "footbot_diffusion_controller",
-                                       id="fdc",
-                                       library="build/controllers/footbot_diffusion/libfootbot_diffusion")
-
+    footbot_controller = ET.SubElement(
+        controllers,
+        "footbot_diffusion_controller",
+        id="fdc",
+        library="build/client/controllers/footbot_diffusion/libfootbot_diffusion")
+    
     # Actuators
     actuators = ET.SubElement(footbot_controller, "actuators")
     differential_steering = ET.SubElement(actuators, "differential_steering", implementation="default")
@@ -118,7 +120,7 @@ def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr
     positioning = ET.SubElement(sensors, "positioning", implementation="default")
 
     # Parameters
-    params = ET.SubElement(footbot_controller, "params", alpha="7.5", omega="3.0", velocity="500", acceleration="10.0", portNumber=f"{port_num}", outputDir=f"metaData{port_num}/")
+    params = ET.SubElement(footbot_controller, "params", alpha="7.5", omega="1.57", velocity="2", acceleration="0.5", portNumber=f"{port_num}", outputDir=f"metaData{port_num}/")
 
     map_center_x = -height / 2+0.5
     map_center_y = -width / 2+0.5

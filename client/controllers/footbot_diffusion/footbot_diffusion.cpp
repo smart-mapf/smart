@@ -66,9 +66,7 @@ void CFootBotDiffusion::Init(TConfigurationNode &t_node) {
     GetNodeAttributeOrDefault(t_node, "acceleration", m_linearAcceleration, m_linearAcceleration);
     GetNodeAttributeOrDefault(t_node, "portNumber", port_number, 8080);
     GetNodeAttributeOrDefault(t_node, "outputDir", m_outputDir,std::string("metaData/"));
-    m_rotateWheelVelocity = 1.22 * m_angularVelocity /100.0; // Convert from rad/s to cm/s
-    m_linearAcceleration /= 100.0; // Convert from cm/s^2 to m/s^2
-    m_fWheelVelocity /= 100.0; // Convert from cm/s to m/s
+    m_rotateWheelVelocity = 0.144 * m_angularVelocity / 2; // Convert from rad/s to m/s
     m_currVelocity = 0.0;
     CVector3 currPos = m_pcPosSens->GetReading().Position;
     robot_id = std::to_string((int) ChangeCoordinateFromArgosToMap(currPos.GetY())) + "_" +
@@ -216,7 +214,7 @@ void CFootBotDiffusion::ControlStep() {
         right_v = turn_velocities.second;
 
     } else {
-        m_pcWheels->SetLinearVelocity(0.0f, 0.0f);
+        setWheels(0.0f, 0.0f);
         left_v = 0.0f;
         right_v = 0.0f;
     }
@@ -260,7 +258,7 @@ std::pair<Real, Real> CFootBotDiffusion::Turn(Real targetAngle, Real currAngle, 
     Real left_v = turn_v.first;
     Real right_v = turn_v.second; 
 
-    m_pcWheels->SetLinearVelocity(left_v*100.0, right_v*100.0); // Convert to cm/s
+    setWheels(left_v, right_v);
     return std::make_pair(left_v, right_v);
 }
 
@@ -282,7 +280,7 @@ double CFootBotDiffusion::getReferenceSpeed(double dist)
     } else if (dist > 0) {
         dist_flag = 1;
     }
-    return dist_flag * std::min(sqrt(2*(m_linearAcceleration*0.9)*std::abs(dist)), m_fWheelVelocity);
+    return dist_flag * std::min(0.9*sqrt(2*(m_linearAcceleration)*std::abs(dist)), m_fWheelVelocity);
 }
 
 std::pair<Real, Real> CFootBotDiffusion::Move(CVector3& targetPos, CVector3& currPos, Real currAngle, Real tolerance = 1.0f)
@@ -331,8 +329,7 @@ std::pair<Real, Real> CFootBotDiffusion::Move(CVector3& targetPos, CVector3& cur
     prevRightVelocity_ = right_v_total;
     prevVelocity_ = linearVelocity;
 
-    m_pcWheels->SetLinearVelocity(left_v_total*100.0, right_v_total*100.0); // Convert to cm/s
-
+    setWheels(left_v_total, right_v_total);
     return std::make_pair(left_v_total, right_v_total);
 }
 

@@ -17,41 +17,22 @@ Advancing MAPF towards the Real World: A Scalable Multi-Agent Realistic Testbed 
 ### RPC
 This repo requires [RPC](https://github.com/rpclib/rpclib) for communication
 between server and clients.
-It also requires [Planner](https://github.com/lunjohnzhang/MAPF-LNS2) for planning.
-Please install rpc using:
-```angular2html
-cd client
-mkdir externalDependencies
-cd externalDependencies
-git clone --recurse-submodules https://github.com/rpclib/rpclib
-cd rpclib
-mkdir build
-cd build
-cmake ..
-make
-sudo make install
-```
 
 ### Argos
 Install Argos 3, please refer to this [Link](https://www.argos-sim.info/core.php) for instruction.
 
 
 ## Compile instructions
-### Client Folder (Simulator)
-- To build the project, first navigate to the client folder Then: 
+- To build the project, first navigate to the home folder Then: 
 ```
-cd ./client
+git submodule init
+git submodule update
 mkdir build
 cd build
+cmake ..
+make -j
 ```
 
-- To produce debuggable code (slow), type:
-
-```angular2html
-cmake -DCMAKE_BUILD_TYPE=Debug ..
-make
-cd ..
-```
 
 If a linking error occurs, please remove the conda from your path (e.g. in your ~/.bashrc).
 
@@ -62,20 +43,6 @@ make
 cd ..
 ```
 
-- You can verify the correctness of the compilation by running: 
-```angular2html
-argos3 -c experiments/diffusion_1.argos
-```
-
-### Server Folder (ADG)
-- Compile the code:
-```angular2html
-cd ./server
-mkdir build
-cd build
-cmake ..
-make
-```
 
 ## Running guide for entire pipeline
 

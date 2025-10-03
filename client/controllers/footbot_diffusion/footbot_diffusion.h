@@ -111,6 +111,9 @@ private:
     void insertActions(std::vector<outputTuple> actions);
     double getReferenceSpeed(double dist);
     void updateQueue();
+    void setWheels(Real left_v, Real right_v) {
+        m_pcWheels->SetLinearVelocity(left_v*100.0, right_v*100.0); // Convert to cm/s
+    }
 
     std::deque<Action> q;
     std::queue<Real> velocityQueue;

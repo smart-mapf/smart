@@ -54,12 +54,12 @@ def run_experiment(args):
     server_process = subprocess.Popen(server_command)
 
     time.sleep(1)
-    os.chdir("client")
+    # os.chdir("client")
 
     client_process = subprocess.Popen(client_command)
 
     client_process.wait()
-    os.chdir("..")
+    # os.chdir("..")
     server_process.wait()
 
 if __name__ == "__main__":
@@ -93,11 +93,11 @@ if __name__ == "__main__":
     print("Argos config file created.")
 
     print("Running simulator ...")
-    server_executable_path = "server/build/ADG_server"
+    server_executable_path = "build/server/ADG_server"
     server_command = [server_executable_path, "-p", path_filename, "-n", str(port_num), "-o",
                       sim_stats_filename, "-m", map_file_path, "-s", str(scen_file_path), f"--method_name=LNS2", f"--flip_coord={args.flip_coord}"]
     print(server_command)
-    client_command = ["argos3", "-c", f"../{config_filename}"]
+    client_command = ["argos3", "-c", f"./{config_filename}"]
     print(client_command)
     # exit(0)
     run_experiment((server_command, client_command))
