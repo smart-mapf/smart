@@ -14,8 +14,12 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Global compiler flags
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -pthread")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math -pthread")
+# Ensure Release builds use optimizations and disable assertions via NDEBUG
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math -pthread -DNDEBUG")
+# Define NDEBUG for Release build so plain C `assert()` is disabled.
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_compile_definitions(NDEBUG)
+endif()
 
 # Print build configuration
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
