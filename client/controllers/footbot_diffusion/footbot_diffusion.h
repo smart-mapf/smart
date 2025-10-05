@@ -111,6 +111,9 @@ private:
     void insertActions(std::vector<outputTuple> actions);
     double getReferenceSpeed(double dist);
     void updateQueue();
+    void setWheels(Real left_v, Real right_v) {
+        m_pcWheels->SetLinearVelocity(left_v*100.0, right_v*100.0); // Convert to cm/s
+    }
 
     std::deque<Action> q;
     std::queue<Real> velocityQueue;
@@ -134,7 +137,7 @@ private:
     Real prevVelocity_ = 0.0;
     Real prev_move_error=0.0;
     Real integral_move_error=0.0;
-    Real kp_move_ = 0.6;
+    Real kp_move_ = 1.0;
     Real ki_move_ = 0.0;
     Real kd_move_ = 0.1;
     std::string debug_id = "-1";
