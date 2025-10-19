@@ -176,9 +176,9 @@ export async function run({
       `--path_filename=${tmp.paths}`,
       `--port=${await getPort()}`,
       `--flip_coord=${flipXY ? "1" : "0"}`,
-      `--max_speed=${maxSpeed ?? 500}`,
-      `--acceleration=${acceleration ?? 10}`,
-      `--angular_max_speed=${angularMaxSpeed ?? 30}`,
+      `--max_speed=${maxSpeed ?? 4}`,
+      `--acceleration=${acceleration ?? 1}`,
+      `--angular_max_speed=${angularMaxSpeed ?? 1}`,
     ],
     {
       stderr: "pipe",
