@@ -108,9 +108,9 @@ def create_Argos(map_data, output_file_path, width, height, robot_init_pos, curr
         footbot_controller, 
         "params", 
         alpha=f"{None or 7.5}", 
-        omega=f"{(kwargs['angular_max_speed'] or 30) / 10}",
-        velocity=f"{kwargs['max_speed'] or 500}", 
-        acceleration=f"{kwargs['acceleration'] or 10}",
+        omega=f"{kwargs['angular_max_speed'] or 1}",
+        velocity=f"{kwargs['max_speed'] or 4}", 
+        acceleration=f"{kwargs['acceleration'] or 1}",
         portNumber=f"{port_num}", 
         outputDir=f"metaData{port_num}/"
     )
