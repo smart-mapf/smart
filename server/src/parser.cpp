@@ -270,7 +270,7 @@ bool parseEntirePlan(const std::string& input_file,
             std::vector<Step> tmp_plan;
             if (!line.empty()) {
                 vector<Point> points = parseLineContinuous(line);
-                raw_cost += static_cast<double> (points.end()->time);
+                raw_cost += static_cast<double> (points.back().time);
                 processAgentActionsContinuous(points, tmp_plan, flipped_coord);
                 agentId++;
             }
