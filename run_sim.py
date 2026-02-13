@@ -3,6 +3,7 @@ import argparse
 import ArgosConfig
 import subprocess
 import time
+import xml.etree.ElementTree as ET
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Argument parser for map_name and scen_name.")
@@ -62,6 +63,22 @@ def run_experiment(args):
     # os.chdir("..")
     server_process.wait()
 
+
+def get_sim_dt_from_argos_config(config_filename: str) -> float:
+    default_dt = 0.1
+    try:
+        tree = ET.parse(config_filename)
+        root = tree.getroot()
+        experiment = root.find("./framework/experiment")
+        if experiment is None:
+            return default_dt
+        ticks_per_second = float(experiment.attrib.get("ticks_per_second", "10"))
+        if ticks_per_second <= 0:
+            return default_dt
+        return 1.0 / ticks_per_second
+    except Exception:
+        return default_dt
+
 if __name__ == "__main__":
     args = parse_arguments()
     print(f"Map Name: {args.map_name}")
@@ -92,10 +109,14 @@ if __name__ == "__main__":
     ArgosConfig.create_Argos(map_data, config_filename, width, height, robot_init_pos, curr_num_agent, port_num, not args.headless)
     print("Argos config file created.")
 
+    sim_dt = get_sim_dt_from_argos_config(config_filename)
+    print(f"Simulation dt: {sim_dt} seconds")
+
     print("Running simulator ...")
     server_executable_path = "build/server/ADG_server"
     server_command = [server_executable_path, "-p", path_filename, "-n", str(port_num), "-o",
-                      sim_stats_filename, "-m", map_file_path, "-s", str(scen_file_path), f"--method_name=LNS2", f"--flip_coord={args.flip_coord}"]
+                      sim_stats_filename, "-m", map_file_path, "-s", str(scen_file_path), f"--method_name=LNS2",
+                      f"--flip_coord={args.flip_coord}", f"--sim_dt={sim_dt}"]
     print(server_command)
     client_command = ["argos3", "-c", f"./{config_filename}"]
     print(client_command)

@@ -1,4 +1,5 @@
 #include "ADG_server.h"
+#include <iomanip>
 
 std::vector<std::chrono::steady_clock::time_point> startTimers; // Start times for each robot
     // =======================
@@ -8,8 +9,10 @@ ADG_Server::ADG_Server(std::string &path_filename,
     std::string map_name, 
     std::string scen_name,
     std::string method_name,
-    bool flip_coord):
-path_filename_(path_filename), curr_map_name(map_name), curr_scen_name(scen_name), curr_method_name(method_name)
+    bool flip_coord,
+    double sim_dt_seconds):
+path_filename_(path_filename), curr_map_name(map_name), curr_scen_name(scen_name), curr_method_name(method_name),
+sim_dt_seconds_(sim_dt_seconds)
  {
     if (path_filename == "none") {
         std::cerr << "No path file provided, exiting ..." << std::endl;
@@ -37,6 +40,12 @@ path_filename_(path_filename), curr_map_name(map_name), curr_scen_name(scen_name
 }
 
 void ADG_Server::saveStats() {
+    int sim_makespan_steps = latest_arr_sim_step;
+    int sim_sum_steps = std::accumulate(agent_finish_sim_step.begin(), agent_finish_sim_step.end(), 0);
+    double sim_makespan_seconds = static_cast<double>(sim_makespan_steps) * sim_dt_seconds_;
+    double sim_sum_cost_seconds = static_cast<double>(sim_sum_steps) * sim_dt_seconds_;
+    double sim_avg_sum_cost_seconds = numRobots > 0 ? sim_sum_cost_seconds / static_cast<double>(numRobots) : 0.0;
+
     std::ifstream infile(output_filename);
     bool exist = infile.good();
     infile.close();
@@ -49,7 +58,7 @@ void ADG_Server::saveStats() {
         addHeads.close();
     }
     ofstream stats(output_filename, std::ios::app);
-    stats << latest_arr_sim_step << "," << std::accumulate(agent_finish_sim_step.begin(), agent_finish_sim_step.end(), 0) << "," <<
+    stats << sim_makespan_steps << "," << sim_sum_steps << "," <<
         *(std::max_element(agent_finish_time.begin(), agent_finish_time.end())) << "," <<
         std::accumulate(agent_finish_time.begin(), agent_finish_time.end(), 0.0) << "," <<
         raw_plan_cost << "," << adg->adg_stats.type2EdgeCount << "," <<
@@ -58,13 +67,16 @@ void ADG_Server::saveStats() {
         adg->adg_stats.consecutiveMoveSequences << "," << static_cast<int>(adg->adg_stats.conflict_pairs.size()) << "," <<
         path_filename_ << "," << numRobots << endl;
     stats.close();
-    // std::cout << "ADG statistics written to " << output_filename << std::endl;
+
     json result = {
-        {"steps finish sim", latest_arr_sim_step},
-        {"sum of steps finish sim", std::accumulate(agent_finish_sim_step.begin(), agent_finish_sim_step.end(), 0)},
+        {"steps finish sim", sim_makespan_steps},
+        {"sum of steps finish sim", sim_sum_steps},
         {"time finish sim", *(std::max_element(agent_finish_time.begin(), agent_finish_time.end()))},
         {"sum finish time", std::accumulate(agent_finish_time.begin(), agent_finish_time.end(), 0.0)},
         {"original plan cost", raw_plan_cost},
+        {"simulated makespan seconds", sim_makespan_seconds},
+        {"simulated sum of cost seconds", sim_sum_cost_seconds},
+        {"simulated average sum of cost seconds", sim_avg_sum_cost_seconds},
         {"#type-2 edges", adg->adg_stats.type2EdgeCount},
         {"#type-1 edges", adg->adg_stats.type1EdgeCount},
         {"#Nodes", adg->adg_stats.totalNodes},
@@ -76,8 +88,14 @@ void ADG_Server::saveStats() {
         {"number of agent", numRobots}
     };
 
-    // Output the JSON
-    std::cout << result.dump() << std::endl; 
+    // Keep machine-readable summary first.
+    std::cout << result.dump() << std::endl;
+
+    std::cout << std::fixed << std::setprecision(6);
+    std::cout << "original plan sum of cost - " << raw_plan_cost << std::endl;
+    std::cout << "simulated makespan - " << sim_makespan_seconds << " s" << std::endl;
+    std::cout << "simulated sum of cost - " << sim_sum_cost_seconds << " s" << std::endl;
+    std::cout << "simulated average sum of cost - " << sim_avg_sum_cost_seconds << " s" << std::endl;
 }
 
 
@@ -184,6 +202,7 @@ int main(int argc, char **argv) {
             ("map_file,m", po::value<string>()->default_value("empty-8-8"), "map filename")
             ("scen_file,s", po::value<string>()->default_value("empty-8-8-random-1"), "scen filename")
             ("method_name", po::value<string>()->default_value("PBS"), "method we used")
+            ("sim_dt", po::value<double>()->default_value(0.1), "simulation dt in seconds")
             ;
 
     po::variables_map vm;
@@ -202,7 +221,7 @@ int main(int argc, char **argv) {
     // std::cout << "Solving for path name: " << filename << std::endl;
     std::string out_filename = vm["output_file"].as<string>();
     server_ptr = std::make_shared<ADG_Server>(filename, out_filename, vm["map_file"].as<string>(), 
-        vm["scen_file"].as<string>(), vm["method_name"].as<string>(), vm["flip_coord"].as<bool>());
+        vm["scen_file"].as<string>(), vm["method_name"].as<string>(), vm["flip_coord"].as<bool>(), vm["sim_dt"].as<double>());
 
     int port_number = vm["port_number"].as<int>();
     try {

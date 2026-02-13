@@ -24,7 +24,7 @@ std::mutex globalMutex;
 class ADG_Server{
 public:
     ADG_Server(std::string& path_filename, std::string& target_output_filename,
-        std::string map_name, std::string scen_name, std::string method_name, bool flip_coord);
+        std::string map_name, std::string scen_name, std::string method_name, bool flip_coord, double sim_dt_seconds);
     void saveStats();
     
     std::shared_ptr<ADG> adg;
@@ -47,4 +47,5 @@ public:
 private:
     std::string path_filename_;
     double raw_plan_cost = -1.0;
+    double sim_dt_seconds_ = 0.1;
 };
