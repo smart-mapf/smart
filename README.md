@@ -2,6 +2,8 @@
 
 [Open the app](https://smart-mapf.github.io/demo/)
 
+[Open the documentation](https://jingtianyan.github.io/smart-docs/)
+
 ---
 
 # Scalable Multi-Agent Realistic Testbed (SMART)
